@@ -21,6 +21,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
         shortcutKey: @js(config('omnisearch.shortcut', 'mod+k')),
         recentSearchesEnabled: @js(config('omnisearch.recent_searches.enabled', true)),
         pageActions: [],
+        itemShortcuts: [],
         isFirstNavigation: true,
         topbarCount: {{ count($panels) + count($actions) }},
         recentSearches: JSON.parse(localStorage.getItem('omnisearch-recent') || '[]'),
@@ -50,8 +51,8 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
             $wire.set('search', term)
             this.$nextTick(() => this.$refs.input.focus())
         },
-        matchesShortcut(event) {
-            const parts = this.shortcutKey.toLowerCase().split('+')
+        matchesShortcutString(event, shortcutStr) {
+            const parts = shortcutStr.toLowerCase().split('+')
             const key = parts[parts.length - 1]
             if (event.key.toLowerCase() !== key) return false
             if (parts.includes('mod') && !event.metaKey && !event.ctrlKey) return false
@@ -61,8 +62,39 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
             if (parts.includes('alt') && !event.altKey) return false
             return true
         },
+        matchesShortcut(event) {
+            return this.matchesShortcutString(event, this.shortcutKey)
+        },
+        rebuildItemShortcuts() {
+            const shortcuts = []
+            for (const action of this.pageActions) {
+                if (action.shortcut) shortcuts.push({ shortcut: action.shortcut, command: action })
+            }
+            const els = this.$refs.omnisearchContent?.querySelectorAll('[data-command]') ?? []
+            for (const el of els) {
+                try {
+                    const cmd = JSON.parse(el.dataset.command)
+                    if (cmd?.shortcut) shortcuts.push({ shortcut: cmd.shortcut, command: cmd })
+                } catch {}
+            }
+            this.itemShortcuts = shortcuts
+        },
         handleKeydown(event) {
-            if (this.matchesShortcut(event)) { event.preventDefault(); this.openPalette() }
+            if (this.matchesShortcut(event)) { event.preventDefault(); this.openPalette(); return }
+            for (const action of this.pageActions) {
+                if (action.shortcut && this.matchesShortcutString(event, action.shortcut)) {
+                    event.preventDefault()
+                    this.execute(action)
+                    return
+                }
+            }
+            for (const entry of this.itemShortcuts) {
+                if (this.matchesShortcutString(event, entry.shortcut)) {
+                    event.preventDefault()
+                    this.execute(entry.command)
+                    return
+                }
+            }
         },
         openPalette() {
             this.open = true
@@ -142,9 +174,9 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
     x-on:keydown.window.prevent.arrow-up="open ? moveSelection(-1) : null"
     x-on:keydown.window.enter="if (open) { $event.preventDefault(); executeActiveCommand() }"
     x-on:open-omnisearch.window="openPalette()"
-    x-on:omnisearch-page-actions.window="pageActions = $event.detail.actions ?? []"
+    x-on:omnisearch-page-actions.window="pageActions = $event.detail.actions ?? []; $nextTick(() => rebuildItemShortcuts())"
     x-on:livewire:navigated.window="if (isFirstNavigation) { isFirstNavigation = false } else { closePalette(); pageActions = [] }"
-    x-on:livewire:updated.window="$nextTick(() => updatePreview())"
+    x-on:livewire:updated.window="$nextTick(() => { updatePreview(); rebuildItemShortcuts() })"
     x-effect="document.body.style.overflow = open ? 'hidden' : ''; updatePreview()"
 >
     {{-- Overlay --}}

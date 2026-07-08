@@ -6,7 +6,7 @@ Think of it as Spotlight or VS Code's command palette, built specifically for Fi
 
 ## Features
 
-- **Keyboard-driven** — Open with `⌘K` / `Ctrl+K`, navigate with arrow keys, execute with Enter
+- **Keyboard-driven** — Open with `⌘K` / `Ctrl+K`, navigate with arrow keys, execute with Enter, trigger actions with custom shortcuts
 - **Built-in Scopes** — Navigation, Resources, Panels, Actions, and Page Actions out of the box
 - **Extensible** — Add custom scopes by implementing `OmnisearchScope`
 - **Record Preview** — Side panel showing resource field details when a result is active
@@ -136,7 +136,9 @@ OmnisearchPlugin::make()
             ->title('My Profile')
             ->subtitle('Open your profile settings')
             ->icon('heroicon-o-user')
-            ->keywords(['profile', 'account', 'settings']),
+            ->keywords(['profile', 'account', 'settings'])
+            ->shortcut('mod+shift+u')
+            ->action(fn () => redirect()->to(Filament::getProfileUrl() ?? '/admin')),
     ]);
 ```
 
@@ -148,7 +150,7 @@ OmnisearchPlugin::make()
 | `subtitle(string)` | Secondary text below the title |
 | `icon(string)` | Heroicon name, e.g. `heroicon-o-bolt` |
 | `keywords(array)` | Extra words used for fuzzy matching |
-| `shortcut(string)` | Optional keyboard shortcut label shown in the result |
+| `shortcut(string)` | Keyboard shortcut — shown as a badge in the result **and** registered as an active hotkey (see [Keyboard Shortcuts](#keyboard-shortcuts)) |
 | `action(callable)` | PHP callable invoked when the action is executed |
 
 ---
@@ -180,7 +182,7 @@ When the page is active, omnisearch will show in the topbar:
 
 ### Adding Custom Page Actions
 
-Override `getOmnisearchActions()` to inject page-specific actions alongside the auto-detected ones:
+Override `getOmnisearchActions()` to inject page-specific actions alongside the auto-detected ones. A `shortcut` key registers an active keyboard hotkey — but only **while the user is on that page**:
 
 ```php
 class EditUser extends EditRecord
@@ -200,11 +202,14 @@ class EditUser extends EditRecord
                 'subtitle' => 'Dispatch a welcome email to this user',
                 'icon'     => 'heroicon-o-envelope',
                 'keywords' => ['email', 'welcome', 'send'],
+                'shortcut' => 'mod+shift+e',    // active only on this page
             ],
         ];
     }
 }
 ```
+
+> For a shortcut that works from **every page**, register the action via `OmnisearchPlugin::make()->actions([...])` instead — global actions are always mounted.
 
 ---
 
@@ -384,12 +389,37 @@ No code changes are required — Laravel's localization system will pick up the 
 
 ## Keyboard Shortcuts
 
+### Built-in
+
 | Key | Action |
 |-----|--------|
 | `⌘K` / `Ctrl+K` | Open omnisearch |
 | `Escape` | Close omnisearch |
 | `↑` / `↓` | Navigate results |
 | `↵` | Execute selected result |
+
+### Custom action shortcuts
+
+Shortcuts defined via `->shortcut()` or the `shortcut` key in an item array are **active hotkeys** — pressing them executes the action directly without opening the palette first.
+
+**Scope of custom shortcuts:**
+
+| Where defined | Active |
+|---|---|
+| `OmnisearchPlugin::make()->actions([...])` | All pages, always |
+| `getOmnisearchActions()` on a page | Only while on that page |
+
+**Shortcut format** — use `+`-separated modifiers followed by a key:
+
+```
+mod+k          // ⌘K on Mac, Ctrl+K on Windows/Linux
+mod+shift+u    // ⌘⇧U / Ctrl+Shift+U
+alt+p          // ⌥P / Alt+P
+```
+
+`mod` resolves to `Cmd` on Mac and `Ctrl` on Windows/Linux. Other modifiers: `ctrl`, `meta`, `shift`, `alt`.
+
+> **Avoid browser-reserved shortcuts.** Common conflicts: `mod+shift+n` (new incognito, Chrome), `mod+shift+p` (private window, Firefox), `mod+shift+j` (DevTools console), `mod+shift+i` (DevTools). Browser UI shortcuts are captured before the page sees them and cannot be overridden with `preventDefault()`.
 
 ---
 
