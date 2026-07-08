@@ -21,6 +21,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
         shortcutKey: @js(config('omnisearch.shortcut', 'mod+k')),
         recentSearchesEnabled: @js(config('omnisearch.recent_searches.enabled', true)),
         pageActions: [],
+        isFirstNavigation: true,
         topbarCount: {{ count($panels) + count($actions) }},
         recentSearches: JSON.parse(localStorage.getItem('omnisearch-recent') || '[]'),
         updatePreview() {
@@ -142,7 +143,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
     x-on:keydown.window.enter="if (open) { $event.preventDefault(); executeActiveCommand() }"
     x-on:open-omnisearch.window="openPalette()"
     x-on:omnisearch-page-actions.window="pageActions = $event.detail.actions ?? []"
-    x-on:livewire:navigated.window="closePalette(); pageActions = []"
+    x-on:livewire:navigated.window="if (isFirstNavigation) { isFirstNavigation = false } else { closePalette(); pageActions = [] }"
     x-on:livewire:updated.window="$nextTick(() => updatePreview())"
     x-effect="document.body.style.overflow = open ? 'hidden' : ''; updatePreview()"
 >
