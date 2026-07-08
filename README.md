@@ -1,6 +1,8 @@
 # Filament Omnisearch
 
-An omnisearch palette plugin for [Filament v5](https://filamentphp.com).
+A keyboard-first command palette for [Filament v5](https://filamentphp.com). Press `⌘K` / `Ctrl+K` from anywhere in your panel to instantly search navigation items, database records, resource actions, and custom commands — without leaving your current page.
+
+Think of it as Spotlight or VS Code's command palette, built specifically for Filament. It replaces (or complements) Filament's native global search with a unified interface that covers everything: navigation, records, panel switching, page-specific actions, and any custom scope you register.
 
 ## Features
 
