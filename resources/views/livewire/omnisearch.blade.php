@@ -12,6 +12,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
 @endphp
 
 <div
+    wire:ignore.self
     x-data="{
         open: false,
         activeIndex: 0,
@@ -20,6 +21,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
         shortcutKey: @js(config('omnisearch.shortcut', 'mod+k')),
         recentSearchesEnabled: @js(config('omnisearch.recent_searches.enabled', true)),
         pageActions: [],
+        topbarCount: {{ count($panels) + count($actions) }},
         recentSearches: JSON.parse(localStorage.getItem('omnisearch-recent') || '[]'),
         updatePreview() {
             if (!this.searchQuery.trim()) {
@@ -84,13 +86,15 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
             this.updatePreview()
         },
         moveSelection(direction) {
-            const total = this.$refs.omnisearchContent?.querySelectorAll('[data-command-index]').length ?? 0
-            if (!total) return
-            this.activeIndex = (this.activeIndex + direction + total) % total
+            const items = [...(this.$refs.omnisearchContent?.querySelectorAll('[data-command-index]') ?? [])]
+            if (!items.length) return
+            const currentPos = items.findIndex(el => el.dataset.commandIndex === String(this.activeIndex))
+            const nextPos = currentPos === -1
+                ? (direction >= 0 ? 0 : items.length - 1)
+                : (currentPos + direction + items.length) % items.length
+            this.activeIndex = parseInt(items[nextPos].dataset.commandIndex)
             this.$nextTick(() => {
-                this.$refs.omnisearchContent
-                    ?.querySelector(`[data-command-index='${this.activeIndex}']`)
-                    ?.scrollIntoView({ block: 'nearest' })
+                items[nextPos]?.scrollIntoView({ block: 'nearest' })
             })
         },
         execute(command) {
@@ -110,11 +114,13 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                 $wire.executeAction(command.id)
                 return
             }
+            if (command.type === 'recent') { this.applyRecentSearch(command.term); return }
+            if (command.type === 'clear') { this.clearRecentSearches(); return }
             if (term) this.addRecentSearch(term)
             this.closePalette()
             if (!command.url) return
             const destination = new URL(command.url, window.location.origin)
-            if (window.Livewire?.navigate && destination.origin === window.location.origin) {
+            if (window.Livewire?.navigate && destination.origin === window.location.origin && !command.id?.startsWith('panel.')) {
                 window.Livewire.navigate(`${destination.pathname}${destination.search}${destination.hash}`)
                 return
             }
@@ -250,12 +256,27 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                         <div class="omnisearch-recent">
                             <div class="omnisearch-recent-header">
                                 <span class="omnisearch-group-label">{{ config('omnisearch.recent_searches.label', 'Recent') }}</span>
-                                <button type="button" x-on:click="clearRecentSearches()" class="omnisearch-recent-clear">Clear</button>
+                                <button
+                                    type="button"
+                                    :data-command-index="topbarCount + 200"
+                                    :data-command="JSON.stringify({ type: 'clear' })"
+                                    x-on:mouseenter="setActiveIndex(topbarCount + 200)"
+                                    x-on:click="clearRecentSearches()"
+                                    class="omnisearch-recent-clear"
+                                    :class="{ 'active': activeIndex === topbarCount + 200 }"
+                                >Clear</button>
                             </div>
                             <div class="omnisearch-recent-list">
-                                <template x-for="term in recentSearches" :key="term">
-                                    <div class="omnisearch-recent-item">
-                                        <button type="button" x-on:click="applyRecentSearch(term)" class="omnisearch-recent-term">
+                                <template x-for="(term, idx) in recentSearches" :key="term">
+                                    <div class="omnisearch-recent-item" :class="{ 'active': activeIndex === topbarCount + 100 + idx }">
+                                        <button
+                                            type="button"
+                                            :data-command-index="topbarCount + 100 + idx"
+                                            :data-command="JSON.stringify({ type: 'recent', term: term })"
+                                            x-on:mouseenter="setActiveIndex(topbarCount + 100 + idx)"
+                                            x-on:click="applyRecentSearch(term)"
+                                            class="omnisearch-recent-term"
+                                        >
                                             <svg class="omnisearch-recent-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                             </svg>
@@ -283,12 +304,12 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                                         <template x-for="(action, idx) in pageActions" :key="action.id">
                                             <button
                                                 type="button"
-                                                :data-command-index="idx"
+                                                :data-command-index="topbarCount + idx"
                                                 :data-command="JSON.stringify(action)"
-                                                x-on:mouseenter="setActiveIndex(idx)"
+                                                x-on:mouseenter="setActiveIndex(topbarCount + idx)"
                                                 x-on:click="execute(action)"
                                                 class="omnisearch-item"
-                                                :class="{ 'active': activeIndex === idx }"
+                                                :class="{ 'active': activeIndex === topbarCount + idx }"
                                             >
                                                 <div class="omnisearch-item-icon-wrap">
                                                     <span class="omnisearch-item-icon" x-html="action.iconHtml || ''"></span>
@@ -310,6 +331,8 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                         </template>
 
                         @php($groupedItems = collect($items)->groupBy('group'))
+                        @php($groupedOffset = count($panels) + count($actions) + 1000)
+                        @php($groupedIdx = 0)
 
                         @if ($groupedItems->isEmpty())
                             <div class="omnisearch-empty">
@@ -347,12 +370,12 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                                             @foreach ($groupItems as $item)
                                                 <button
                                                     type="button"
-                                                    data-command-index="{{ $itemIndex }}"
+                                                    data-command-index="{{ $groupedOffset + $groupedIdx }}"
                                                     data-command='@json($item)'
-                                                    x-on:mouseenter="setActiveIndex({{ $itemIndex }})"
+                                                    x-on:mouseenter="setActiveIndex({{ $groupedOffset + $groupedIdx }})"
                                                     x-on:click="execute(JSON.parse($el.dataset.command))"
                                                     class="omnisearch-item"
-                                                    :class="{ 'active': activeIndex === {{ $itemIndex }} }"
+                                                    :class="{ 'active': activeIndex === {{ $groupedOffset + $groupedIdx }} }"
                                                 >
                                                     <div class="omnisearch-item-icon-wrap">
                                                         <span class="omnisearch-item-icon">
@@ -372,7 +395,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                                                         </svg>
                                                     </div>
                                                 </button>
-                                                @php($itemIndex++)
+                                                @php($groupedIdx++)
                                             @endforeach
                                         </div>
                                     </section>
