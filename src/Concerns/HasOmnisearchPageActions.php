@@ -40,6 +40,16 @@ trait HasOmnisearchPageActions
         return [];
     }
 
+    /**
+     * Public accessor so global scopes can index custom actions.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getOmnisearchCustomActions(): array
+    {
+        return $this->getOmnisearchActions();
+    }
+
     /** @return class-string<Resource> */
     private function getOmnisearchResource(): string
     {

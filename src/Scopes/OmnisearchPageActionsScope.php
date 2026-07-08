@@ -74,12 +74,56 @@ final class OmnisearchPageActionsScope implements OmnisearchScope
                 ];
             } catch (Throwable) {
             }
+
+            // Index custom actions defined in getOmnisearchActions() on each page
+            try {
+                foreach ($resourceClass::getPages() as $route => $registration) {
+                    $pageClass = $registration->getPage();
+
+                    if (! in_array(HasOmnisearchPageActions::class, class_uses_recursive($pageClass), true)) {
+                        continue;
+                    }
+
+                    foreach ($this->resolvePageCustomActions($pageClass) as $action) {
+                        $id = $action['id'] ?? null;
+
+                        if (! is_string($id) || $id === '') {
+                            continue;
+                        }
+
+                        $action['id']    = 'page.'.$route.'.'.$resourceClass::getSlug().'.'.$id;
+                        $action['group'] = empty($action['group']) ? $group : $action['group'];
+
+                        $items[] = $action;
+                    }
+                }
+            } catch (Throwable) {
+            }
         }
 
+        /** @var list<array{id: string, type: 'url'|'modal'|'action', group: string, title: string, subtitle: string, icon: string, keywords: array<int, string>, url?: string, modalId?: string, action?: callable, shortcut?: string}> $items */
         return array_values(array_filter(
             $items,
             fn (array $item): bool => $this->matchesQuery($item, $query),
         ));
+    }
+
+    /**
+     * @param  string  $pageClass
+     * @return array<int, array<string, mixed>>
+     */
+    private function resolvePageCustomActions(string $pageClass): array
+    {
+        $page = app($pageClass);
+
+        if (! is_object($page) || ! method_exists($page, 'getOmnisearchCustomActions')) {
+            return [];
+        }
+
+        /** @var array<int, array<string, mixed>> $result */
+        $result = $page->getOmnisearchCustomActions();
+
+        return $result;
     }
 
     /** @param class-string<Resource> $resourceClass */
