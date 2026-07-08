@@ -1,6 +1,6 @@
 {
-    "name": "ifsware/ifsware-spotlight",
-    "description": "Powerful dynamic spotlight search plugin for Filament",
+    "name": "ifsware/filament-omnisearch",
+    "description": "Powerful dynamic omnisearch plugin for Filament",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -22,14 +22,14 @@
     },
     "autoload": {
         "psr-4": {
-            "Ifsware\\Spotlight\\": "src/"
+            "Ifsware\\Omnisearch\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Ifsware\\Spotlight\\": "src/",
-            "Ifsware\\Spotlight\\Workbench\\": "workbench/",
-            "Ifsware\\Spotlight\\Tests\\": "tests/"
+            "Ifsware\\Omnisearch\\": "src/",
+            "Ifsware\\Omnisearch\\Workbench\\": "workbench/",
+            "Ifsware\\Omnisearch\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -43,7 +43,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Ifsware\\Spotlight\\IfswareSpotlightServiceProvider"
+                "Ifsware\\Omnisearch\\OmnisearchServiceProvider"
             ]
         }
     },

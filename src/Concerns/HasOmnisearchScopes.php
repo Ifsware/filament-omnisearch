@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Ifsware\Spotlight\Concerns;
+namespace Ifsware\Omnisearch\Concerns;
 
-use Ifsware\Spotlight\Contracts\IfswareSpotlightScope;
-use Ifsware\Spotlight\IfswareFuzzyMatcher;
+use Ifsware\Omnisearch\Contracts\OmnisearchScope;
+use Ifsware\Omnisearch\OmnisearchFuzzyMatcher;
 
-trait HasIfswareSpotlightScopes
+trait HasOmnisearchScopes
 {
-    /** @var array<int, class-string<IfswareSpotlightScope>> */
+    /** @var array<int, class-string<OmnisearchScope>> */
     protected array $scopes = [];
 
-    /** @param class-string<IfswareSpotlightScope> $scope */
+    /** @param class-string<OmnisearchScope> $scope */
     public function registerScope(string $scope): static
     {
         if (! in_array($scope, $this->scopes, true)) {
@@ -22,7 +22,7 @@ trait HasIfswareSpotlightScopes
         return $this;
     }
 
-    /** @return array<int, class-string<IfswareSpotlightScope>> */
+    /** @return array<int, class-string<OmnisearchScope>> */
     public function getScopes(): array
     {
         return $this->scopes;
@@ -51,7 +51,7 @@ trait HasIfswareSpotlightScopes
         foreach ($this->scopes as $scopeClass) {
             $scope = app($scopeClass);
 
-            if (! $scope instanceof IfswareSpotlightScope || ! $scope->isActive()) {
+            if (! $scope instanceof OmnisearchScope || ! $scope->isActive()) {
                 continue;
             }
 
@@ -70,7 +70,7 @@ trait HasIfswareSpotlightScopes
                 implode(' ', $item['keywords']),
             ]);
 
-            $item['_score'] = IfswareFuzzyMatcher::score($query, $haystack);
+            $item['_score'] = OmnisearchFuzzyMatcher::score($query, $haystack);
 
             return $item;
         }, $items);

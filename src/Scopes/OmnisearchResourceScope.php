@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Ifsware\Spotlight\Scopes;
+namespace Ifsware\Omnisearch\Scopes;
 
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\GlobalSearch\GlobalSearchResults;
 use Filament\GlobalSearch\Providers\DefaultGlobalSearchProvider;
-use Ifsware\Spotlight\Contracts\IfswareSpotlightScope;
+use Ifsware\Omnisearch\Contracts\OmnisearchScope;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
-final class IfswareResourceScope implements IfswareSpotlightScope
+final class OmnisearchResourceScope implements OmnisearchScope
 {
     public function isActive(): bool
     {
@@ -34,7 +34,7 @@ final class IfswareResourceScope implements IfswareSpotlightScope
 
         try {
             // getGlobalSearchProvider() returns null when globalSearch(false) is set on the panel.
-            // We fall back to the default provider so spotlight can still search resources
+            // We fall back to the default provider so omnisearch can still search resources
             // even when the native global search UI is hidden.
             $provider = Filament::getGlobalSearchProvider()
                 ?? app(DefaultGlobalSearchProvider::class);
@@ -77,7 +77,7 @@ final class IfswareResourceScope implements IfswareSpotlightScope
             }
         }
 
-        return array_slice($items, 0, Config::integer('ifsware-spotlight.max_results', 50));
+        return array_slice($items, 0, Config::integer('omnisearch.max_results', 50));
     }
 
     private function normalizeText(string|Htmlable $value): string

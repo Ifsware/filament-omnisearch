@@ -1,12 +1,12 @@
-# Ifsware Spotlight
+# Filament Omnisearch
 
-A spotlight search palette plugin for [Filament v5](https://filamentphp.com).
+An omnisearch palette plugin for [Filament v5](https://filamentphp.com).
 
 ## Features
 
 - **Keyboard-driven** — Open with `⌘K` / `Ctrl+K`, navigate with arrow keys, execute with Enter
 - **Built-in Scopes** — Navigation, Resources, Panels, and Actions out of the box
-- **Extensible** — Add custom scopes by implementing `IfswareSpotlightScope`
+- **Extensible** — Add custom scopes by implementing `OmnisearchScope`
 - **Record Preview** — Side panel showing resource field details when a result is active
 - **Recent Searches** — Persisted per-browser with configurable toggle
 - **Page Actions** — Auto-detect Create/List actions from any Filament resource page
@@ -23,19 +23,19 @@ A spotlight search palette plugin for [Filament v5](https://filamentphp.com).
 ## Installation
 
 ```bash
-composer require ifsware/ifsware-spotlight
+composer require ifsware/filament-omnisearch
 ```
 
 Register the plugin in your Filament panel provider:
 
 ```php
-use Ifsware\Spotlight\IfswareSpotlightPlugin;
+use Ifsware\Omnisearch\OmnisearchPlugin;
 
 public function panel(Panel $panel): Panel
 {
     return $panel
         ->plugins([
-            IfswareSpotlightPlugin::make(),
+            OmnisearchPlugin::make(),
         ]);
 }
 ```
@@ -43,14 +43,14 @@ public function panel(Panel $panel): Panel
 Publish the config file:
 
 ```bash
-php artisan vendor:publish --tag="ifsware-spotlight-config"
+php artisan vendor:publish --tag="omnisearch-config"
 ```
 
 ---
 
 ## What Works Out of the Box
 
-After installation and registration, opening the spotlight palette (`⌘K` / `Ctrl+K`) gives you four built-in scopes automatically.
+After installation and registration, opening the omnisearch palette (`⌘K` / `Ctrl+K`) gives you four built-in scopes automatically.
 
 ### 1. Navigation Scope
 
@@ -93,7 +93,7 @@ class UserResource extends Resource
 }
 ```
 
-> If `$recordTitleAttribute` is not set and `getGlobalSearchResults()` is not implemented, the resource will not appear in spotlight results.
+> If `$recordTitleAttribute` is not set and `getGlobalSearchResults()` is not implemented, the resource will not appear in omnisearch results.
 
 ### 3. Panel Scope
 
@@ -107,15 +107,15 @@ Shows global actions registered on the plugin (see [Global Actions](#global-acti
 
 ## Global Actions
 
-Register application-level actions on the plugin using `IfswareSpotlightAction`. Actions appear in the **Actions** group and can run any PHP callable.
+Register application-level actions on the plugin using `OmnisearchAction`. Actions appear in the **Actions** group and can run any PHP callable.
 
 ```php
-use Ifsware\Spotlight\IfswareSpotlightPlugin;
-use Ifsware\Spotlight\IfswareSpotlightAction;
+use Ifsware\Omnisearch\OmnisearchPlugin;
+use Ifsware\Omnisearch\OmnisearchAction;
 
-IfswareSpotlightPlugin::make()
+OmnisearchPlugin::make()
     ->actions([
-        IfswareSpotlightAction::make('clear-cache')
+        OmnisearchAction::make('clear-cache')
             ->title('Clear Application Cache')
             ->subtitle('Run artisan cache:clear')
             ->icon('heroicon-o-trash')
@@ -123,7 +123,7 @@ IfswareSpotlightPlugin::make()
             ->shortcut('mod+shift+c')
             ->action(fn () => \Artisan::call('cache:clear')),
 
-        IfswareSpotlightAction::make('go-profile')
+        OmnisearchAction::make('go-profile')
             ->title('My Profile')
             ->subtitle('Open your profile settings')
             ->icon('heroicon-o-user')
@@ -131,7 +131,7 @@ IfswareSpotlightPlugin::make()
     ]);
 ```
 
-`IfswareSpotlightAction` fluent API:
+`OmnisearchAction` fluent API:
 
 | Method | Description |
 |--------|-------------|
@@ -146,36 +146,36 @@ IfswareSpotlightPlugin::make()
 
 ## Page Actions
 
-Add `HasIfswareSpotlightPageActions` to a resource page to automatically expose **Create** and **List** actions in the palette while the user is on that page.
+Add `HasOmnisearchPageActions` to a resource page to automatically expose **Create** and **List** actions in the palette while the user is on that page.
 
 ```php
-use Ifsware\Spotlight\Concerns\HasIfswareSpotlightPageActions;
+use Ifsware\Omnisearch\Concerns\HasOmnisearchPageActions;
 
 class EditUser extends EditRecord
 {
-    use HasIfswareSpotlightPageActions;
+    use HasOmnisearchPageActions;
 
     protected static string $resource = UserResource::class;
 }
 ```
 
-When this page is open, spotlight will show:
+When this page is open, omnisearch will show:
 
 - **Create User** — links to the resource create page (if it exists)
 - **Users** — links back to the resource index (if it exists)
 
 ### Adding Custom Page Actions
 
-Override `getSpotlightActions()` to inject page-specific actions alongside the auto-detected ones:
+Override `getOmnisearchActions()` to inject page-specific actions alongside the auto-detected ones:
 
 ```php
 class EditUser extends EditRecord
 {
-    use HasIfswareSpotlightPageActions;
+    use HasOmnisearchPageActions;
 
     protected static string $resource = UserResource::class;
 
-    protected function getSpotlightActions(): array
+    protected function getOmnisearchActions(): array
     {
         return [
             [
@@ -196,14 +196,14 @@ class EditUser extends EditRecord
 
 ## Custom Scopes
 
-Implement `IfswareSpotlightScope` to add any results you want. Each item must have a `type` of `url`, `action`, or `modal`.
+Implement `OmnisearchScope` to add any results you want. Each item must have a `type` of `url`, `action`, or `modal`.
 
 ### URL item — navigates to a page
 
 ```php
-use Ifsware\Spotlight\Contracts\IfswareSpotlightScope;
+use Ifsware\Omnisearch\Contracts\OmnisearchScope;
 
-final class SettingsScope implements IfswareSpotlightScope
+final class SettingsScope implements OmnisearchScope
 {
     public function isActive(): bool
     {
@@ -260,15 +260,15 @@ final class SettingsScope implements IfswareSpotlightScope
 
 ### Register the scope
 
-Add it to `config/ifsware-spotlight.php`:
+Add it to `config/omnisearch.php`:
 
 ```php
 'scopes' => [
-    \Ifsware\Spotlight\Scopes\IfswareNavigationScope::class,
-    \Ifsware\Spotlight\Scopes\IfswareResourceScope::class,
-    \Ifsware\Spotlight\Scopes\IfswarePanelScope::class,
-    \Ifsware\Spotlight\Scopes\IfswareActionScope::class,
-    \App\Spotlight\SettingsScope::class, // your custom scope
+    \Ifsware\Omnisearch\Scopes\OmnisearchNavigationScope::class,
+    \Ifsware\Omnisearch\Scopes\OmnisearchResourceScope::class,
+    \Ifsware\Omnisearch\Scopes\OmnisearchPanelScope::class,
+    \Ifsware\Omnisearch\Scopes\OmnisearchActionScope::class,
+    \App\Omnisearch\SettingsScope::class, // your custom scope
 ],
 ```
 
@@ -277,18 +277,18 @@ Add it to `config/ifsware-spotlight.php`:
 ## Configuration
 
 ```php
-// config/ifsware-spotlight.php
+// config/omnisearch.php
 
 return [
-    // Set to false or SPOTLIGHT_ENABLED=false in .env to disable entirely
-    'enabled' => env('SPOTLIGHT_ENABLED', true),
+    // Set to false or OMNISEARCH_ENABLED=false in .env to disable entirely
+    'enabled' => env('OMNISEARCH_ENABLED', true),
 
     // Active scopes — order determines result order in the palette
     'scopes' => [
-        \Ifsware\Spotlight\Scopes\IfswareNavigationScope::class,
-        \Ifsware\Spotlight\Scopes\IfswareResourceScope::class,
-        \Ifsware\Spotlight\Scopes\IfswarePanelScope::class,
-        \Ifsware\Spotlight\Scopes\IfswareActionScope::class,
+        \Ifsware\Omnisearch\Scopes\OmnisearchNavigationScope::class,
+        \Ifsware\Omnisearch\Scopes\OmnisearchResourceScope::class,
+        \Ifsware\Omnisearch\Scopes\OmnisearchPanelScope::class,
+        \Ifsware\Omnisearch\Scopes\OmnisearchActionScope::class,
     ],
 
     // Maximum number of results returned across all scopes
@@ -322,10 +322,10 @@ return [
 ### Plugin options
 
 ```php
-IfswareSpotlightPlugin::make()
+OmnisearchPlugin::make()
     // Pass false to keep Filament's native global search bar visible
     ->disableDefaultGlobalSearch(false)
-    ->actions([/* IfswareSpotlightAction instances */]);
+    ->actions([/* OmnisearchAction instances */]);
 ```
 
 ---
@@ -334,8 +334,8 @@ IfswareSpotlightPlugin::make()
 
 | Key | Action |
 |-----|--------|
-| `⌘K` / `Ctrl+K` | Open spotlight |
-| `Escape` | Close spotlight |
+| `⌘K` / `Ctrl+K` | Open omnisearch |
+| `Escape` | Close omnisearch |
 | `↑` / `↓` | Navigate results |
 | `↵` | Execute selected result |
 

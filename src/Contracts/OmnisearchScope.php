@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Ifsware\Spotlight\Contracts;
+namespace Ifsware\Omnisearch\Contracts;
 
-interface IfswareSpotlightScope
+interface OmnisearchScope
 {
     /**
      * @param  array<string, mixed>  $context

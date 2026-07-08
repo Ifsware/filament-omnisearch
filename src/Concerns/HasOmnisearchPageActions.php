@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ifsware\Spotlight\Concerns;
+namespace Ifsware\Omnisearch\Concerns;
 
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\Blade;
@@ -10,23 +10,23 @@ use Illuminate\Support\Facades\Config;
 use Throwable;
 
 /**
- * Add this trait to any Filament resource page to expose its actions in spotlight.
+ * Add this trait to any Filament resource page to expose its actions in omnisearch.
  *
  * Usage:
  *   class ManageBarbershops extends ManageRecords
  *   {
- *       use HasSpotlightPageActions;
+ *       use HasOmnisearchPageActions;
  *   }
  *
- * Override getSpotlightActions() to add custom page-specific actions.
+ * Override getOmnisearchActions() to add custom page-specific actions.
  *
  * @phpstan-require-extends \Filament\Resources\Pages\Page
  */
-trait HasIfswareSpotlightPageActions
+trait HasOmnisearchPageActions
 {
-    public function bootedHasIfswareSpotlightPageActions(): void
+    public function bootedHasOmnisearchPageActions(): void
     {
-        $this->dispatch('spotlight-page-actions', actions: $this->resolveSpotlightPageActions());
+        $this->dispatch('omnisearch-page-actions', actions: $this->resolveOmnisearchPageActions());
     }
 
     /**
@@ -34,13 +34,13 @@ trait HasIfswareSpotlightPageActions
      *
      * @return array<int, array<string, mixed>>
      */
-    protected function getSpotlightActions(): array
+    protected function getOmnisearchActions(): array
     {
         return [];
     }
 
     /** @return class-string<Resource> */
-    private function getSpotlightResource(): string
+    private function getOmnisearchResource(): string
     {
         return static::getResource();
     }
@@ -48,10 +48,10 @@ trait HasIfswareSpotlightPageActions
     /**
      * @return array<int, array<string, mixed>>
      */
-    private function resolveSpotlightPageActions(): array
+    private function resolveOmnisearchPageActions(): array
     {
-        $group = Config::string('ifsware-spotlight.groups.page.label', 'Page');
-        $resource = $this->getSpotlightResource();
+        $group = Config::string('omnisearch.groups.page.label', 'Page');
+        $resource = $this->getOmnisearchResource();
         $auto = [];
 
         // Auto-detect "Create" action
@@ -84,7 +84,7 @@ trait HasIfswareSpotlightPageActions
             // Resource does not have an index page
         }
 
-        return array_merge($auto, $this->getSpotlightActions());
+        return array_merge($auto, $this->getOmnisearchActions());
     }
 
     /**

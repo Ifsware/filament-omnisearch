@@ -2,17 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Ifsware\Spotlight\Tests;
+namespace Ifsware\Omnisearch\Tests;
 
-use Ifsware\Spotlight\Contracts\IfswareSpotlightScope;
-use Ifsware\Spotlight\Livewire\IfswareSpotlight;
+use Ifsware\Omnisearch\Contracts\OmnisearchScope;
+use Ifsware\Omnisearch\Livewire\Omnisearch;
+use Ifsware\Omnisearch\OmnisearchAction;
+use Ifsware\Omnisearch\OmnisearchManager;
 
-final class SpotlightScopeTest extends TestbenchTestCase
+final class OmnisearchScopeTest extends TestbenchTestCase
 {
 
     public function test_scope_returns_items(): void
     {
-        $scope = new class implements IfswareSpotlightScope {
+        $scope = new class implements OmnisearchScope {
             public function isActive(): bool
             {
                 return true;
@@ -43,28 +45,33 @@ final class SpotlightScopeTest extends TestbenchTestCase
 
     public function test_component_uses_scopes(): void
     {
-        $component = new IfswareSpotlight();
-        $component->mount();
-        $component->registerScope(\Ifsware\Spotlight\Scopes\IfswarePanelScope::class);
+        $component = new Omnisearch();
+        $component->registerScope(\Ifsware\Omnisearch\Tests\Stubs\TestScopeStub::class);
 
         $items = $component->getScopedItems('', []);
 
         $this->assertNotEmpty($items);
+        $this->assertSame('Stub Item', $items[0]['title']);
     }
 
     public function test_empty_search_returns_actions_only(): void
     {
-        config(['spotlight.scopes' => [
-            \Ifsware\Spotlight\Scopes\IfswarePanelScope::class,
-            \Ifsware\Spotlight\Scopes\IfswareActionScope::class,
+        app(OmnisearchManager::class)->registerAction(
+            OmnisearchAction::make('test-action')
+                ->title('Test Action')
+                ->subtitle('Run test action')
+                ->icon('heroicon-o-bolt')
+                ->keywords(['test'])
+        );
+
+        config(['omnisearch.scopes' => [
+            \Ifsware\Omnisearch\Scopes\OmnisearchActionScope::class,
         ]]);
 
-        $component = new IfswareSpotlight();
-        $component->mount();
-
+        $component = new Omnisearch();
         $html = $component->render()->render();
 
-        $this->assertStringContainsString('Go to', $html);
+        $this->assertStringContainsString('Test Action', $html);
         $this->assertStringContainsString('No recent searches', $html);
     }
 }

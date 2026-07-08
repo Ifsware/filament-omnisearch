@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Ifsware\Spotlight\Scopes;
+namespace Ifsware\Omnisearch\Scopes;
 
 use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
 use Filament\Support\Icons\Heroicon;
-use Ifsware\Spotlight\Concerns\MatchesIfswareSpotlightQuery;
-use Ifsware\Spotlight\Contracts\IfswareSpotlightScope;
+use Ifsware\Omnisearch\Concerns\MatchesOmnisearchQuery;
+use Ifsware\Omnisearch\Contracts\OmnisearchScope;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 
-final class IfswareNavigationScope implements IfswareSpotlightScope
+final class OmnisearchNavigationScope implements OmnisearchScope
 {
-    use MatchesIfswareSpotlightQuery;
+    use MatchesOmnisearchQuery;
 
     public function isActive(): bool
     {
@@ -50,7 +50,7 @@ final class IfswareNavigationScope implements IfswareSpotlightScope
                 $items[] = [
                     'id'       => 'nav.'.Str::slug($item->getLabel()),
                     'type'     => 'url',
-                    'group'    => Config::string('ifsware-spotlight.groups.navigate.label', 'Navigate'),
+                    'group'    => Config::string('omnisearch.groups.navigate.label', 'Navigate'),
                     'title'    => $item->getLabel(),
                     'subtitle' => $this->resolveSubtitle($item),
                     'icon'     => $this->resolveIcon($item),
@@ -106,6 +106,6 @@ final class IfswareNavigationScope implements IfswareSpotlightScope
     {
         $group = $this->resolveGroupLabel($item);
 
-        return filled($group) ? $group : Config::string('ifsware-spotlight.groups.navigate.subtitle', 'Navigate to this page');
+        return filled($group) ? $group : Config::string('omnisearch.groups.navigate.subtitle', 'Navigate to this page');
     }
 }
