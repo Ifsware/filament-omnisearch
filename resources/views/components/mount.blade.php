@@ -1,1 +1,1 @@
-@livewire('ifsware-spotlight')
+@livewire('omnisearch')

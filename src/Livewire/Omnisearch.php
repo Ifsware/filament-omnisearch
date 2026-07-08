@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Ifsware\Spotlight\Livewire;
+namespace Ifsware\Omnisearch\Livewire;
 
 use Filament\Facades\Filament;
-use Ifsware\Spotlight\Concerns\HasIfswareSpotlightScopes;
-use Ifsware\Spotlight\Contracts\IfswareSpotlightScope;
-use Ifsware\Spotlight\IfswareSpotlightManager;
+use Ifsware\Omnisearch\Concerns\HasOmnisearchScopes;
+use Ifsware\Omnisearch\Contracts\OmnisearchScope;
+use Ifsware\Omnisearch\OmnisearchManager;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Config;
 use Livewire\Component;
 
-final class IfswareSpotlight extends Component
+final class Omnisearch extends Component
 {
-    use HasIfswareSpotlightScopes;
+    use HasOmnisearchScopes;
 
     public string $search = '';
 
     public function executeAction(string $id): void
     {
-        app(IfswareSpotlightManager::class)->findAction($id)?->execute();
+        app(OmnisearchManager::class)->findAction($id)?->execute();
     }
 
     public function render(): View
@@ -33,8 +33,8 @@ final class IfswareSpotlight extends Component
 
         $this->scopes = [];
 
-        foreach (Config::array('ifsware-spotlight.scopes', []) as $scope) {
-            if (is_string($scope) && is_a($scope, IfswareSpotlightScope::class, true)) {
+        foreach (Config::array('omnisearch.scopes', []) as $scope) {
+            if (is_string($scope) && is_a($scope, OmnisearchScope::class, true)) {
                 $this->scopes[] = $scope;
             }
         }
@@ -56,7 +56,7 @@ final class IfswareSpotlight extends Component
             }
         }
 
-        return view()->make('spotlight::livewire.spotlight', [
+        return view()->make('omnisearch::livewire.omnisearch', [
             'actions' => $actions,
             'items' => $items,
             'panels' => $panels,

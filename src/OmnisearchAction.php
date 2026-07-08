@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Ifsware\Spotlight;
+namespace Ifsware\Omnisearch;
 
 use Illuminate\Support\Facades\Config;
 
-final class IfswareSpotlightAction
+final class OmnisearchAction
 {
     protected string $title = '';
 
@@ -92,7 +92,7 @@ final class IfswareSpotlightAction
         $data = [
             'id'       => $this->id,
             'type'     => 'action',
-            'group'    => Config::string('ifsware-spotlight.groups.actions.label', 'Actions'),
+            'group'    => Config::string('omnisearch.groups.actions.label', 'Actions'),
             'title'    => $this->title,
             'subtitle' => $this->subtitle,
             'icon'     => $this->icon,

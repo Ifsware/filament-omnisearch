@@ -1,8 +1,8 @@
 <x-filament-panels::page>
     <div class="max-w-2xl mx-auto p-8">
         <div class="text-center space-y-4">
-            <h1 class="text-3xl font-semibold text-gray-950 dark:text-white">Ifsware Spotlight</h1>
-            <p class="text-gray-500 dark:text-gray-400">Press <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono">⌘K</kbd> or <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono">Ctrl+K</kbd> to open the spotlight.</p>
+            <h1 class="text-3xl font-semibold text-gray-950 dark:text-white">Filament Omnisearch</h1>
+            <p class="text-gray-500 dark:text-gray-400">Press <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono">⌘K</kbd> or <kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono">Ctrl+K</kbd> to open the omnisearch.</p>
         </div>
 
         <div class="mt-12 grid grid-cols-2 gap-4">

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Ifsware\Spotlight;
+namespace Ifsware\Omnisearch;
 
-final class IfswareFuzzyMatcher
+final class OmnisearchFuzzyMatcher
 {
     /**
      * Score how well $query matches $text. Returns 0 (no match) to 100 (exact).

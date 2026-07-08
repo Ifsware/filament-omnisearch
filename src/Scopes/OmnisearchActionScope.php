@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Ifsware\Spotlight\Scopes;
+namespace Ifsware\Omnisearch\Scopes;
 
-use Ifsware\Spotlight\Concerns\MatchesIfswareSpotlightQuery;
-use Ifsware\Spotlight\Contracts\IfswareSpotlightScope;
-use Ifsware\Spotlight\IfswareSpotlightManager;
+use Ifsware\Omnisearch\Concerns\MatchesOmnisearchQuery;
+use Ifsware\Omnisearch\Contracts\OmnisearchScope;
+use Ifsware\Omnisearch\OmnisearchManager;
 
-final class IfswareActionScope implements IfswareSpotlightScope
+final class OmnisearchActionScope implements OmnisearchScope
 {
-    use MatchesIfswareSpotlightQuery;
+    use MatchesOmnisearchQuery;
 
     public function isActive(): bool
     {
@@ -25,7 +25,7 @@ final class IfswareActionScope implements IfswareSpotlightScope
     {
         $actions = [];
 
-        foreach (app(IfswareSpotlightManager::class)->getActions() as $action) {
+        foreach (app(OmnisearchManager::class)->getActions() as $action) {
             $actions[] = $action->toArray();
         }
 

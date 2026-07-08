@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Ifsware\Spotlight\Concerns;
+namespace Ifsware\Omnisearch\Concerns;
 
-use Ifsware\Spotlight\IfswareFuzzyMatcher;
+use Ifsware\Omnisearch\OmnisearchFuzzyMatcher;
 
-trait MatchesIfswareSpotlightQuery
+trait MatchesOmnisearchQuery
 {
     /**
      * @param  array{title: string, subtitle: string, keywords: array<int, string>}  $item
@@ -19,6 +19,6 @@ trait MatchesIfswareSpotlightQuery
             implode(' ', $item['keywords']),
         ]));
 
-        return IfswareFuzzyMatcher::matches($query, $haystack);
+        return OmnisearchFuzzyMatcher::matches($query, $haystack);
     }
 }

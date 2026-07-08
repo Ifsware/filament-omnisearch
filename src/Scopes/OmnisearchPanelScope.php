@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Ifsware\Spotlight\Scopes;
+namespace Ifsware\Omnisearch\Scopes;
 
 use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
-use Ifsware\Spotlight\Concerns\MatchesIfswareSpotlightQuery;
-use Ifsware\Spotlight\Contracts\IfswareSpotlightScope;
+use Ifsware\Omnisearch\Concerns\MatchesOmnisearchQuery;
+use Ifsware\Omnisearch\Contracts\OmnisearchScope;
 use Illuminate\Database\Eloquent\Model;
 
-final class IfswarePanelScope implements IfswareSpotlightScope
+final class OmnisearchPanelScope implements OmnisearchScope
 {
-    use MatchesIfswareSpotlightQuery;
+    use MatchesOmnisearchQuery;
 
     public function isActive(): bool
     {
