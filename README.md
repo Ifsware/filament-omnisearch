@@ -61,7 +61,7 @@ Searches all visible navigation items registered in the current panel. No config
 Searches **records** across all resources that have Filament's global search enabled. A resource is searchable only when it declares at least one of:
 
 - `$recordTitleAttribute` — the column used as the result title
-- `$globalSearchResultDetails` — extra columns shown in the result subtitle and preview panel
+- `getGlobalSearchResultDetails()` — method override returning fields shown in the subtitle and preview panel
 - A custom `getGlobalSearchResults()` implementation
 
 **Minimal example** — make a resource record searchable:
@@ -86,14 +86,16 @@ class UserResource extends Resource
     protected static ?string $recordTitleAttribute = 'name';
 
     // These fields appear in the side preview when a result is highlighted
-    protected static array $globalSearchResultDetails = [
-        'Email'  => 'email',
-        'Role'   => 'role',
-    ];
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Email' => $record->email,
+        ];
+    }
 }
 ```
 
-> If `$recordTitleAttribute` is not set and `getGlobalSearchResults()` is not implemented, the resource will not appear in omnisearch results.
+> If `$recordTitleAttribute` is not set and `getGlobalSearchResultDetails()` is not implemented, the resource will not appear in omnisearch results.
 
 ### 3. Panel Scope
 

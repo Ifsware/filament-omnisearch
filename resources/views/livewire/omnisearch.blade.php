@@ -16,11 +16,16 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
         open: false,
         activeIndex: 0,
         activePreview: null,
+        searchQuery: '',
         shortcutKey: @js(config('omnisearch.shortcut', 'mod+k')),
         recentSearchesEnabled: @js(config('omnisearch.recent_searches.enabled', true)),
         pageActions: [],
         recentSearches: JSON.parse(localStorage.getItem('omnisearch-recent') || '[]'),
         updatePreview() {
+            if (!this.searchQuery.trim()) {
+                this.activePreview = null
+                return
+            }
             const el = this.$refs.omnisearchContent?.querySelector(`[data-command-index='${this.activeIndex}']`)
             const cmd = el ? JSON.parse(el.dataset.command ?? 'null') : null
             this.activePreview = cmd?.preview ?? null
@@ -69,12 +74,14 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
             this.open = false
             this.activeIndex = 0
             this.activePreview = null
+            this.searchQuery = ''
             if (resetSearch) {
                 $wire.set('search', '')
             }
         },
         setActiveIndex(index) {
             this.activeIndex = index
+            this.updatePreview()
         },
         moveSelection(direction) {
             const total = this.$refs.omnisearchContent?.querySelectorAll('[data-command-index]').length ?? 0
@@ -130,6 +137,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
     x-on:open-omnisearch.window="openPalette()"
     x-on:omnisearch-page-actions.window="pageActions = $event.detail.actions ?? []"
     x-on:livewire:navigated.window="closePalette(); pageActions = []"
+    x-on:livewire:updated.window="$nextTick(() => updatePreview())"
     x-effect="document.body.style.overflow = open ? 'hidden' : ''; updatePreview()"
 >
     {{-- Overlay --}}
@@ -165,6 +173,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                     <input
                         x-ref="input"
                         wire:model.live.debounce.150ms="search"
+                        x-on:input="searchQuery = $event.target.value"
                         type="text"
                         placeholder="{{ config('omnisearch.placeholder', 'Search commands, pages, resources...') }}"
                         class="omnisearch-search-input"

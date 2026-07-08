@@ -74,4 +74,18 @@ final class OmnisearchScopeTest extends TestbenchTestCase
         $this->assertStringContainsString('Test Action', $html);
         $this->assertStringContainsString('No recent searches', $html);
     }
+
+    public function test_render_includes_preview_in_data_command(): void
+    {
+        config(['omnisearch.scopes' => [
+            \Ifsware\Omnisearch\Tests\Stubs\PreviewScopeStub::class,
+        ]]);
+
+        $component = new Omnisearch();
+        $html = $component->render()->render();
+
+        $this->assertStringContainsString('Preview Item', $html);
+        $this->assertStringContainsString('"preview"', $html);
+        $this->assertStringContainsString('Preview Title', $html);
+    }
 }
