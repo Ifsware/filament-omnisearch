@@ -5,11 +5,11 @@ An omnisearch palette plugin for [Filament v5](https://filamentphp.com).
 ## Features
 
 - **Keyboard-driven** — Open with `⌘K` / `Ctrl+K`, navigate with arrow keys, execute with Enter
-- **Built-in Scopes** — Navigation, Resources, Panels, and Actions out of the box
+- **Built-in Scopes** — Navigation, Resources, Panels, Actions, and Page Actions out of the box
 - **Extensible** — Add custom scopes by implementing `OmnisearchScope`
 - **Record Preview** — Side panel showing resource field details when a result is active
 - **Recent Searches** — Persisted per-browser with configurable toggle
-- **Page Actions** — Auto-detect Create/List actions from any Filament resource page
+- **Page Actions** — Auto-detect Create/List actions; discoverable from any page via search
 - **Dark Mode** — Follows Filament's theme automatically
 - **Fuzzy Search** — Smart matching with keyword support
 
@@ -50,7 +50,7 @@ php artisan vendor:publish --tag="omnisearch-config"
 
 ## What Works Out of the Box
 
-After installation and registration, opening the omnisearch palette (`⌘K` / `Ctrl+K`) gives you four built-in scopes automatically.
+After installation and registration, opening the omnisearch palette (`⌘K` / `Ctrl+K`) gives you five built-in scopes automatically.
 
 ### 1. Navigation Scope
 
@@ -105,6 +105,10 @@ Lists other Filament panels the authenticated user has access to. Useful in mult
 
 Shows global actions registered on the plugin (see [Global Actions](#global-actions) below). Actions appear without a search query so they are always discoverable.
 
+### 5. Page Actions Scope
+
+Automatically discovers **Create** and **List** actions for every resource whose pages use the `HasOmnisearchPageActions` trait. Unlike the per-page chip, these results appear in **search results from any page** — not only when the user is currently on that resource's page.
+
 ---
 
 ## Global Actions
@@ -148,12 +152,15 @@ OmnisearchPlugin::make()
 
 ## Page Actions
 
-Add `HasOmnisearchPageActions` to a resource page to automatically expose **Create** and **List** actions in the palette while the user is on that page.
+Add `HasOmnisearchPageActions` to a resource page to expose **Create** and **List** actions in two places:
+
+1. **Topbar chip** — shown while the user is on that page, for quick one-click access
+2. **Search results** — available from any page via `OmnisearchPageActionsScope` (see [built-in scopes](#5-page-actions-scope))
 
 ```php
 use Ifsware\Omnisearch\Concerns\HasOmnisearchPageActions;
 
-class EditUser extends EditRecord
+class ListUsers extends ListRecords
 {
     use HasOmnisearchPageActions;
 
@@ -161,7 +168,9 @@ class EditUser extends EditRecord
 }
 ```
 
-When this page is open, omnisearch will show:
+You only need to add the trait to **one page** per resource (typically the list page). The `OmnisearchPageActionsScope` scans all resource pages automatically, so Create/List actions will appear in search results regardless of which page the user is currently on.
+
+When the page is active, omnisearch will show in the topbar:
 
 - **Create User** — links to the resource create page (if it exists)
 - **Users** — links back to the resource index (if it exists)
@@ -270,6 +279,7 @@ Add it to `config/omnisearch.php`:
     \Ifsware\Omnisearch\Scopes\OmnisearchResourceScope::class,
     \Ifsware\Omnisearch\Scopes\OmnisearchPanelScope::class,
     \Ifsware\Omnisearch\Scopes\OmnisearchActionScope::class,
+    \Ifsware\Omnisearch\Scopes\OmnisearchPageActionsScope::class,
     \App\Omnisearch\SettingsScope::class, // your custom scope
 ],
 ```
@@ -291,6 +301,7 @@ return [
         \Ifsware\Omnisearch\Scopes\OmnisearchResourceScope::class,
         \Ifsware\Omnisearch\Scopes\OmnisearchPanelScope::class,
         \Ifsware\Omnisearch\Scopes\OmnisearchActionScope::class,
+        \Ifsware\Omnisearch\Scopes\OmnisearchPageActionsScope::class,
     ],
 
     // Maximum number of results returned across all scopes
