@@ -16,6 +16,7 @@ use Throwable;
 final class OmnisearchPageActionsScope implements OmnisearchScope
 {
     use MatchesOmnisearchQuery;
+    use \Ifsware\Omnisearch\Concerns\TransConfig;
 
     public function isActive(): bool
     {
@@ -32,7 +33,7 @@ final class OmnisearchPageActionsScope implements OmnisearchScope
             return [];
         }
 
-        $group = Config::string('omnisearch.groups.page.label', 'Page');
+        $group = $this->transConfig('omnisearch.groups.page.label', 'omnisearch::omnisearch.page');
         $items = [];
 
         foreach (Filament::getResources() as $resourceClass) {
@@ -50,7 +51,7 @@ final class OmnisearchPageActionsScope implements OmnisearchScope
                     'type'     => 'url',
                     'group'    => $group,
                     'title'    => $resourceClass::getPluralModelLabel(),
-                    'subtitle' => 'Go to the '.strtolower($resourceClass::getPluralModelLabel()).' list',
+                    'subtitle' => __('omnisearch::omnisearch.go_to_list', ['resource' => strtolower($resourceClass::getPluralModelLabel())]),
                     'icon'     => 'heroicon-o-list-bullet',
                     'keywords' => ['list', 'index', strtolower($resourceClass::getPluralModelLabel()), strtolower($resourceClass::getModelLabel())],
                     'url'      => $resourceClass::getUrl('index'),
@@ -64,8 +65,8 @@ final class OmnisearchPageActionsScope implements OmnisearchScope
                     'id'       => 'page.create.'.$resourceClass::getSlug(),
                     'type'     => 'url',
                     'group'    => $group,
-                    'title'    => 'Create '.$resourceClass::getModelLabel(),
-                    'subtitle' => 'Add a new '.strtolower($resourceClass::getModelLabel()),
+                    'title'    => __('omnisearch::omnisearch.create_resource', ['resource' => $resourceClass::getModelLabel()]),
+                    'subtitle' => __('omnisearch::omnisearch.add_new_resource', ['resource' => strtolower($resourceClass::getModelLabel())]),
                     'icon'     => 'heroicon-o-plus-circle',
                     'keywords' => ['create', 'new', 'add', strtolower($resourceClass::getModelLabel())],
                     'url'      => $resourceClass::getUrl('create'),

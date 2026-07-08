@@ -14,6 +14,7 @@ Think of it as Spotlight or VS Code's command palette, built specifically for Fi
 - **Page Actions** — Auto-detect Create/List actions; discoverable from any page via search
 - **Dark Mode** — Follows Filament's theme automatically
 - **Fuzzy Search** — Smart matching with keyword support
+- **Multilingual** — Built-in translations for English, Indonesian, and Dutch
 
 ## Requirements
 
@@ -312,23 +313,26 @@ return [
     // Keyboard shortcut to open the palette (mod = Cmd on Mac, Ctrl on Windows/Linux)
     'shortcut' => 'mod+k',
 
-    'placeholder' => 'Search commands, pages, resources...',
+    // Set a string to override the placeholder for all locales,
+    // or leave null to use the translation file (default).
+    'placeholder' => null,
 
-    // Group labels shown as section headers in the palette
+    // Group labels shown as section headers in the palette.
+    // Leave null to use the translation file (default).
     'groups' => [
-        'navigate' => ['label' => 'Navigate', 'subtitle' => 'Navigate to this page'],
-        'actions'  => ['label' => 'Actions'],
-        'page'     => ['label' => 'Page'],
+        'navigate' => ['label' => null, 'subtitle' => null],
+        'actions'  => ['label' => null],
+        'page'     => ['label' => null],
     ],
 
     'recent_searches' => [
         'enabled' => true,
-        'label'   => 'Recent',
+        'label'   => null,      // leave null to use translation file (default)
         'max'     => 5,         // maximum number of recent searches to show
     ],
 
     'empty_state' => [
-        'message'     => 'No recent searches',
+        'message'     => null,  // leave null to use translation file (default)
         'suggestions' => ['dashboard', 'users', 'settings'],
     ],
 ];
@@ -342,6 +346,39 @@ OmnisearchPlugin::make()
     ->disableDefaultGlobalSearch(false)
     ->actions([/* OmnisearchAction instances */]);
 ```
+
+---
+
+## Multilingual Support
+
+Filament Omnisearch ships with built-in translations for **English** (default), **Indonesian**, and **Dutch**. All UI strings — including placeholders, group labels, empty state messages, and footer shortcuts — are translatable.
+
+### Publish translations
+
+```bash
+php artisan vendor:publish --tag="omnisearch-translations"
+```
+
+This copies the language files to `resources/lang/vendor/omnisearch/{en,id,nl}/`. Edit them to customize wording or add new locales.
+
+### Override via config
+
+You can still override specific strings globally via `config/omnisearch.php`. When a config value is set to a non-empty string, it takes precedence over the translation file.
+
+```php
+'placeholder' => 'Type to search...',   // overrides translation file
+'groups' => [
+    'navigate' => ['label' => 'Go to', 'subtitle' => null], // mixed usage
+],
+```
+
+### Adding a new language
+
+1. Copy `resources/lang/en/omnisearch.php`
+2. Place it under `resources/lang/vendor/omnisearch/{locale}/omnisearch.php`
+3. Translate the values
+
+No code changes are required — Laravel's localization system will pick up the new locale automatically.
 
 ---
 

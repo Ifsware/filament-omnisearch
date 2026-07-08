@@ -40,9 +40,9 @@ final class OmnisearchPanelScope implements OmnisearchScope
             $panels[] = [
                 'id'       => 'panel.'.$panel->getId(),
                 'type'     => 'url',
-                'group'    => 'Go to',
+                'group'    => __('omnisearch::omnisearch.go_to'),
                 'title'    => ucfirst($panel->getId()),
-                'subtitle' => 'Switch to the '.ucfirst($panel->getId()).' panel',
+                'subtitle' => __('omnisearch::omnisearch.switch_panel', ['panel' => ucfirst($panel->getId())]),
                 'icon'     => 'heroicon-o-squares-2x2',
                 'keywords' => [$panel->getId(), 'panel', 'switch'],
                 'url'      => '/'.$panel->getPath(),

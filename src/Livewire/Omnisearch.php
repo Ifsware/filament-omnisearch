@@ -47,9 +47,9 @@ final class Omnisearch extends Component
         $items = [];
 
         foreach ($allItems as $item) {
-            if ($item['group'] === 'Go to') {
+            if (str_starts_with($item['id'], 'panel.')) {
                 $panels[] = $item;
-            } elseif ($item['group'] === 'Actions' && $query === '') {
+            } elseif ($item['type'] === 'action' && $query === '') {
                 $actions[] = $item;
             } else {
                 $items[] = $item;

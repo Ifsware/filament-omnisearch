@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 final class OmnisearchNavigationScope implements OmnisearchScope
 {
     use MatchesOmnisearchQuery;
+    use \Ifsware\Omnisearch\Concerns\TransConfig;
 
     public function isActive(): bool
     {
@@ -50,7 +51,7 @@ final class OmnisearchNavigationScope implements OmnisearchScope
                 $items[] = [
                     'id'       => 'nav.'.Str::slug($item->getLabel()),
                     'type'     => 'url',
-                    'group'    => Config::string('omnisearch.groups.navigate.label', 'Navigate'),
+                    'group'    => $this->transConfig('omnisearch.groups.navigate.label', 'omnisearch::omnisearch.navigate'),
                     'title'    => $item->getLabel(),
                     'subtitle' => $this->resolveSubtitle($item),
                     'icon'     => $this->resolveIcon($item),
@@ -106,6 +107,6 @@ final class OmnisearchNavigationScope implements OmnisearchScope
     {
         $group = $this->resolveGroupLabel($item);
 
-        return filled($group) ? $group : Config::string('omnisearch.groups.navigate.subtitle', 'Navigate to this page');
+        return filled($group) ? $group : $this->transConfig('omnisearch.groups.navigate.subtitle', 'omnisearch::omnisearch.navigate_subtitle');
     }
 }

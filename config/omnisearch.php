@@ -38,7 +38,11 @@ return [
     |--------------------------------------------------------------------------
     | Search Input Placeholder
     |--------------------------------------------------------------------------
+    | Leave null to use the translation file (default). Set a string here
+    | to override it for all locales.
     */
+    'placeholder' => null,
+
     /*
     |--------------------------------------------------------------------------
     | Keyboard Shortcut
@@ -48,40 +52,47 @@ return [
     */
     'shortcut' => 'mod+k',
 
-    'placeholder' => 'Search commands, pages, resources...',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Empty State
-    |--------------------------------------------------------------------------
-    */
     /*
     |--------------------------------------------------------------------------
     | Group Labels
     |--------------------------------------------------------------------------
     | Customize the group headings shown in the omnisearch results.
+    | Leave null to use the translation file (default).
     */
     'groups' => [
         'navigate' => [
-            'label'    => 'Navigate',
-            'subtitle' => 'Navigate to this page',
+            'label'    => null,
+            'subtitle' => null,
         ],
         'actions' => [
-            'label' => 'Actions',
+            'label' => null,
         ],
         'page' => [
-            'label' => 'Page',
+            'label' => null,
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Recent Searches
+    |--------------------------------------------------------------------------
+    */
     'recent_searches' => [
         'enabled' => true,
-        'label'   => 'Recent',
+        'label'   => null,
         'max'     => 5,
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Empty State
+    |--------------------------------------------------------------------------
+    | Message shown when the palette is open but there is no query and no
+    | recent searches. Leave null to use the translation file (default).
+    | Suggestions are clickable keywords shown when a search returns no results.
+    */
     'empty_state' => [
-        'message'     => 'No recent searches',
+        'message'     => null,
         'suggestions' => ['dashboard', 'users', 'settings'],
     ],
 

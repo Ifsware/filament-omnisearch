@@ -24,6 +24,7 @@ use Throwable;
  */
 trait HasOmnisearchPageActions
 {
+    use \Ifsware\Omnisearch\Concerns\TransConfig;
     public function bootedHasOmnisearchPageActions(): void
     {
         $this->dispatch('omnisearch-page-actions', actions: $this->resolveOmnisearchPageActions());
@@ -50,7 +51,7 @@ trait HasOmnisearchPageActions
      */
     private function resolveOmnisearchPageActions(): array
     {
-        $group = Config::string('omnisearch.groups.page.label', 'Page');
+        $group = $this->transConfig('omnisearch.groups.page.label', 'omnisearch::omnisearch.page');
         $resource = $this->getOmnisearchResource();
         $auto = [];
 
@@ -59,8 +60,8 @@ trait HasOmnisearchPageActions
             $auto[] = $this->buildPageAction(
                 id: 'page.create',
                 group: $group,
-                title: 'Create '.$resource::getModelLabel(),
-                subtitle: 'Add a new '.strtolower($resource::getModelLabel()),
+                title: __('omnisearch::omnisearch.create_resource', ['resource' => $resource::getModelLabel()]),
+                subtitle: __('omnisearch::omnisearch.add_new_resource', ['resource' => strtolower($resource::getModelLabel())]),
                 icon: 'heroicon-o-plus-circle',
                 keywords: ['create', 'new', 'add', strtolower($resource::getModelLabel())],
                 url: $resource::getUrl('create'),
@@ -75,7 +76,7 @@ trait HasOmnisearchPageActions
                 id: 'page.index',
                 group: $group,
                 title: $resource::getPluralModelLabel(),
-                subtitle: 'Back to the '.strtolower($resource::getPluralModelLabel()).' list',
+                subtitle: __('omnisearch::omnisearch.go_to_list', ['resource' => strtolower($resource::getPluralModelLabel())]),
                 icon: 'heroicon-o-list-bullet',
                 keywords: ['list', 'index', 'back', strtolower($resource::getPluralModelLabel())],
                 url: $resource::getUrl('index'),

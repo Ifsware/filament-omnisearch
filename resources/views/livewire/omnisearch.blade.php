@@ -182,7 +182,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                         wire:model.live.debounce.150ms="search"
                         x-on:input="searchQuery = $event.target.value"
                         type="text"
-                        placeholder="{{ config('omnisearch.placeholder', 'Search commands, pages, resources...') }}"
+                        placeholder="{{ config('omnisearch.placeholder') ?? __('omnisearch::omnisearch.placeholder') }}"
                         class="omnisearch-search-input"
                     />
                     <button type="button" x-on:click="closePalette()" class="omnisearch-search-close">
@@ -206,7 +206,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                         <div class="omnisearch-topbar">
                             @if ($panels !== [])
                                 <div class="omnisearch-topbar-group">
-                                    <span class="omnisearch-topbar-label">Go to</span>
+                                    <span class="omnisearch-topbar-label">{{ __('omnisearch::omnisearch.go_to') }}</span>
                                     @foreach ($panels as $panel)
                                         <button
                                             type="button"
@@ -256,7 +256,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                     <template x-if="recentSearchesEnabled && !$wire.search && recentSearches.length > 0">
                         <div class="omnisearch-recent">
                             <div class="omnisearch-recent-header">
-                                <span class="omnisearch-group-label">{{ config('omnisearch.recent_searches.label', 'Recent') }}</span>
+                                <span class="omnisearch-group-label">{{ config('omnisearch.recent_searches.label') ?? __('omnisearch::omnisearch.recent') }}</span>
                                 <button
                                     type="button"
                                     :data-command-index="topbarCount + 200"
@@ -265,7 +265,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                                     x-on:click="clearRecentSearches()"
                                     class="omnisearch-recent-clear"
                                     :class="{ 'active': activeIndex === topbarCount + 200 }"
-                                >Clear</button>
+                                >{{ __('omnisearch::omnisearch.clear') }}</button>
                             </div>
                             <div class="omnisearch-recent-list">
                                 <template x-for="(term, idx) in recentSearches" :key="term">
@@ -283,7 +283,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                                             </svg>
                                             <span x-text="term"></span>
                                         </button>
-                                        <button type="button" x-on:click="removeRecentSearch(term)" class="omnisearch-recent-remove" aria-label="Remove">
+                                        <button type="button" x-on:click="removeRecentSearch(term)" class="omnisearch-recent-remove" aria-label="{{ __('omnisearch::omnisearch.remove_aria_label') }}">
                                             <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                                             </svg>
@@ -300,7 +300,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                         <template x-if="pageActions.length > 0">
                             <div class="omnisearch-groups" style="margin-bottom: 1rem">
                                 <section class="omnisearch-group">
-                                    <div class="omnisearch-group-label">{{ config('omnisearch.groups.page.label', 'Page') }}</div>
+                                    <div class="omnisearch-group-label">{{ config('omnisearch.groups.page.label') ?? __('omnisearch::omnisearch.page') }}</div>
                                     <div class="omnisearch-group-items">
                                         <template x-for="(action, idx) in pageActions" :key="action.id">
                                             <button
@@ -350,15 +350,15 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                                 </div>
                                 <div class="omnisearch-empty-body">
                                     @if (filled($search))
-                                        <p class="omnisearch-empty-title">No results for &quot;{{ $search }}&quot;</p>
+                                        <p class="omnisearch-empty-title">{{ __('omnisearch::omnisearch.no_results', ['query' => $search]) }}</p>
                                         <p class="omnisearch-empty-hint">
-                                            Try:
+                                            {{ __('omnisearch::omnisearch.try') }}
                                             @foreach (config('omnisearch.empty_state.suggestions', ['home', 'issue', 'metrics', 'projects']) as $suggestion)
                                                 <button type="button" wire:click="set('search', '{{ $suggestion }}')" class="omnisearch-suggestion">{{ $suggestion }}</button>{{ $loop->last ? '' : ', ' }}
                                             @endforeach
                                         </p>
                                     @else
-                                        <p class="omnisearch-empty-title">{{ config('omnisearch.empty_state.message', 'No recent searches') }}</p>
+                                        <p class="omnisearch-empty-title">{{ config('omnisearch.empty_state.message') ?? __('omnisearch::omnisearch.no_recent_searches') }}</p>
                                     @endif
                                 </div>
                             </div>
@@ -410,7 +410,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                 {{-- Preview Panel --}}
                 <div class="omnisearch-preview-panel" x-show="activePreview" x-cloak>
                     <div class="omnisearch-preview-header">
-                        <div class="omnisearch-preview-eyebrow">Preview</div>
+                        <div class="omnisearch-preview-eyebrow">{{ __('omnisearch::omnisearch.preview') }}</div>
                         <div class="omnisearch-preview-title" x-text="activePreview?.title"></div>
                     </div>
                     <div class="omnisearch-preview-fields">
@@ -428,9 +428,9 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
             {{-- Footer --}}
             <div class="omnisearch-footer">
                 <div class="omnisearch-footer-shortcuts">
-                    <span class="omnisearch-footer-shortcut"><kbd class="omnisearch-kbd">↑↓</kbd> navigate</span>
-                    <span class="omnisearch-footer-shortcut"><kbd class="omnisearch-kbd">↵</kbd> open</span>
-                    <span class="omnisearch-footer-shortcut"><kbd class="omnisearch-kbd">Esc</kbd> close</span>
+                    <span class="omnisearch-footer-shortcut"><kbd class="omnisearch-kbd">↑↓</kbd> {{ __('omnisearch::omnisearch.footer_navigate') }}</span>
+                    <span class="omnisearch-footer-shortcut"><kbd class="omnisearch-kbd">↵</kbd> {{ __('omnisearch::omnisearch.footer_open') }}</span>
+                    <span class="omnisearch-footer-shortcut"><kbd class="omnisearch-kbd">Esc</kbd> {{ __('omnisearch::omnisearch.footer_close') }}</span>
                 </div>
                 <span>Filament Omnisearch</span>
             </div>

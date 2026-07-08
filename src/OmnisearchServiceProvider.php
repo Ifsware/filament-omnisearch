@@ -18,7 +18,8 @@ final class OmnisearchServiceProvider extends PackageServiceProvider
         $package
             ->name('omnisearch')
             ->hasConfigFile('omnisearch')
-            ->hasViews('omnisearch');
+            ->hasViews('omnisearch')
+            ->hasTranslations();
     }
 
     public function packageRegistered(): void

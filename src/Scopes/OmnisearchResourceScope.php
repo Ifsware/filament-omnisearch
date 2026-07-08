@@ -96,7 +96,7 @@ final class OmnisearchResourceScope implements OmnisearchScope
     private function formatSubtitle(GlobalSearchResult $result): string
     {
         if ($result->details === []) {
-            return 'Filament global search result';
+            return __('omnisearch::omnisearch.global_search_result');
         }
 
         return collect($result->details)

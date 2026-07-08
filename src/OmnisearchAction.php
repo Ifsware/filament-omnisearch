@@ -8,9 +8,20 @@ use Illuminate\Support\Facades\Config;
 
 final class OmnisearchAction
 {
+    use \Ifsware\Omnisearch\Concerns\TransConfig;
     protected string $title = '';
 
-    protected string $subtitle = 'Run this action';
+    protected ?string $titleTransKey = null;
+
+    /** @var array<string, bool|float|int|string|null> */
+    protected array $titleTransParams = [];
+
+    protected string $subtitle = '';
+
+    protected ?string $subtitleTransKey = null;
+
+    /** @var array<string, bool|float|int|string|null> */
+    protected array $subtitleTransParams = [];
 
     protected string $icon = 'heroicon-o-bolt';
 
@@ -32,6 +43,16 @@ final class OmnisearchAction
     public function title(string $title): static
     {
         $this->title = $title;
+        $this->titleTransKey = null;
+
+        return $this;
+    }
+
+    /** @param array<string, bool|float|int|string|null> $params */
+    public function transTitle(string $key, array $params = []): static
+    {
+        $this->titleTransKey = $key;
+        $this->titleTransParams = $params;
 
         return $this;
     }
@@ -39,6 +60,16 @@ final class OmnisearchAction
     public function subtitle(string $subtitle): static
     {
         $this->subtitle = $subtitle;
+        $this->subtitleTransKey = null;
+
+        return $this;
+    }
+
+    /** @param array<string, bool|float|int|string|null> $params */
+    public function transSubtitle(string $key, array $params = []): static
+    {
+        $this->subtitleTransKey = $key;
+        $this->subtitleTransParams = $params;
 
         return $this;
     }
@@ -89,12 +120,20 @@ final class OmnisearchAction
      */
     public function toArray(): array
     {
+        $title = $this->titleTransKey !== null
+            ? $this->trans($this->titleTransKey, $this->titleTransParams)
+            : $this->title;
+
+        $subtitle = $this->subtitleTransKey !== null
+            ? $this->trans($this->subtitleTransKey, $this->subtitleTransParams)
+            : (filled($this->subtitle) ? $this->subtitle : $this->trans('omnisearch::omnisearch.run_this_action'));
+
         $data = [
             'id'       => $this->id,
             'type'     => 'action',
-            'group'    => Config::string('omnisearch.groups.actions.label', 'Actions'),
-            'title'    => $this->title,
-            'subtitle' => $this->subtitle,
+            'group'    => $this->transConfig('omnisearch.groups.actions.label', 'omnisearch::omnisearch.actions'),
+            'title'    => $title,
+            'subtitle' => $subtitle,
             'icon'     => $this->icon,
             'keywords' => $this->keywords,
         ];
