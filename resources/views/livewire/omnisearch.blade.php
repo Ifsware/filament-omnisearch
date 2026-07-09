@@ -18,6 +18,16 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
         activeIndex: 0,
         activePreview: null,
         searchQuery: '',
+        copiedId: null,
+        copyFallback(text) {
+            const el = document.createElement('textarea')
+            el.value = text
+            el.style.cssText = 'position:fixed;opacity:0;pointer-events:none'
+            document.body.appendChild(el)
+            el.select()
+            document.execCommand('copy')
+            document.body.removeChild(el)
+        },
         shortcutKey: @js(config('omnisearch.shortcut', 'mod+k')),
         recentSearchesEnabled: @js(config('omnisearch.recent_searches.enabled', true)),
         pageActions: [],
@@ -145,6 +155,23 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                 if (term) this.addRecentSearch(term)
                 this.closePalette()
                 $wire.executeAction(command.id)
+                return
+            }
+            if (command.type === 'clipboard') {
+                const text = command.text ?? ''
+                const markCopied = () => {
+                    this.copiedId = command.id
+                    setTimeout(() => { this.copiedId = null; this.closePalette() }, 1000)
+                }
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text).then(markCopied).catch(() => {
+                        this.copyFallback(text)
+                        markCopied()
+                    })
+                } else {
+                    this.copyFallback(text)
+                    markCopied()
+                }
                 return
             }
             if (command.type === 'recent') { this.applyRecentSearch(command.term); return }
@@ -423,9 +450,18 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                                                         @if (filled($item['shortcut'] ?? null))
                                                             <span class="omnisearch-shortcut">{{ $item['shortcut'] }}</span>
                                                         @endif
-                                                        <svg class="omnisearch-item-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
-                                                        </svg>
+                                                        @if (($item['type'] ?? '') === 'clipboard')
+                                                            <svg x-show="copiedId !== '{{ $item['id'] }}'" class="omnisearch-item-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+                                                            </svg>
+                                                            <svg x-show="copiedId === '{{ $item['id'] }}'" x-cloak class="omnisearch-item-arrow" style="color:var(--success-600,#16a34a)" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                            </svg>
+                                                        @else
+                                                            <svg class="omnisearch-item-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+                                                            </svg>
+                                                        @endif
                                                     </div>
                                                 </button>
                                                 @php($groupedIdx++)

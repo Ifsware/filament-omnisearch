@@ -322,6 +322,34 @@ final class SettingsScope implements OmnisearchScope
 ]
 ```
 
+### Clipboard item — copies text to the clipboard
+
+```php
+[
+    'id'       => 'clipboard.api-key',
+    'type'     => 'clipboard',
+    'group'    => 'Copy',
+    'title'    => 'Copy API Key',
+    'subtitle' => 'sk-••••••••••••••••',
+    'icon'     => 'heroicon-o-clipboard',
+    'keywords' => ['api', 'key', 'copy', 'token'],
+    'text'     => $apiKey, // the actual value written to the clipboard
+]
+```
+
+When selected, the value in `text` is written to the clipboard via the browser's Clipboard API. The item icon briefly changes to a checkmark, then the palette closes automatically.
+
+`OmnisearchAction` also supports clipboard via the fluent API:
+
+```php
+OmnisearchAction::make('copy-api-key')
+    ->title('Copy API Key')
+    ->subtitle('sk-••••••••••••••••')
+    ->icon('heroicon-o-clipboard')
+    ->keywords(['api', 'key', 'copy'])
+    ->clipboard($user->api_key),
+```
+
 ### Register the scope
 
 Add it to `config/omnisearch.php`:

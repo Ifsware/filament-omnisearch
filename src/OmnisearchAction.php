@@ -30,6 +30,11 @@ final class OmnisearchAction
 
     protected ?string $shortcut = null;
 
+    /** @var 'action'|'clipboard' */
+    protected string $type = 'action';
+
+    protected ?string $clipboardText = null;
+
     /** @var callable|null */
     protected mixed $handler = null;
 
@@ -103,6 +108,14 @@ final class OmnisearchAction
         return $this;
     }
 
+    public function clipboard(string $text): static
+    {
+        $this->type = 'clipboard';
+        $this->clipboardText = $text;
+
+        return $this;
+    }
+
     public function execute(): void
     {
         if ($this->handler !== null) {
@@ -116,7 +129,7 @@ final class OmnisearchAction
     }
 
     /**
-     * @return array{id: string, type: 'action', group: string, title: string, subtitle: string, icon: string, keywords: array<int, string>, shortcut?: string}
+     * @return array{id: string, type: 'action'|'clipboard', group: string, title: string, subtitle: string, icon: string, keywords: array<int, string>, shortcut?: string, text?: string}
      */
     public function toArray(): array
     {
@@ -130,7 +143,7 @@ final class OmnisearchAction
 
         $data = [
             'id'       => $this->id,
-            'type'     => 'action',
+            'type'     => $this->type,
             'group'    => $this->transConfig('omnisearch.groups.actions.label', 'omnisearch::omnisearch.actions'),
             'title'    => $title,
             'subtitle' => $subtitle,
@@ -140,6 +153,10 @@ final class OmnisearchAction
 
         if ($this->shortcut !== null) {
             $data['shortcut'] = $this->shortcut;
+        }
+
+        if ($this->type === 'clipboard' && $this->clipboardText !== null) {
+            $data['text'] = $this->clipboardText;
         }
 
         return $data;

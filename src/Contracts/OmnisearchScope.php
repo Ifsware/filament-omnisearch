@@ -10,7 +10,7 @@ interface OmnisearchScope
      * @param  array<string, mixed>  $context
      * @return array<int, array{
      *     id: string,
-     *     type: 'url'|'modal'|'action',
+     *     type: 'url'|'modal'|'action'|'clipboard',
      *     group: string,
      *     title: string,
      *     subtitle: string,

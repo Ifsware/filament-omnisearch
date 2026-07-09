@@ -32,7 +32,7 @@ trait HasOmnisearchScopes
      * @param  array<string, mixed>  $context
      * @return array<int, array{
      *     id: string,
-     *     type: 'url'|'modal'|'action',
+     *     type: 'url'|'modal'|'action'|'clipboard',
      *     group: string,
      *     title: string,
      *     subtitle: string,
@@ -42,6 +42,7 @@ trait HasOmnisearchScopes
      *     modalId?: string,
      *     action?: callable,
      *     shortcut?: string,
+     *     text?: string,
      * }>
      */
     public function getScopedItems(string $query, array $context): array
