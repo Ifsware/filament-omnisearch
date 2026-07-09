@@ -4,6 +4,12 @@ A keyboard-first command palette for [Filament v5](https://filamentphp.com). Pre
 
 Think of it as Spotlight or VS Code's command palette, built specifically for Filament. It replaces (or complements) Filament's native global search with a unified interface that covers everything: navigation, records, panel switching, page-specific actions, and any custom scope you register.
 
+## Preview
+
+![preview](resources/img/preview.png)
+
+
+
 ## Features
 
 - **Keyboard-driven** — Open with `⌘K` / `Ctrl+K`, navigate with arrow keys, execute with Enter, trigger actions with custom shortcuts
