@@ -100,6 +100,51 @@ class UserResource extends Resource
 
 > If `$recordTitleAttribute` is not set and `getGlobalSearchResultDetails()` is not implemented, the resource will not appear in omnisearch results.
 
+### Scoping Resource Search Results
+
+`OmnisearchResourceScope` uses Filament's built-in global search under the hood. For each searchable resource it calls `getGlobalSearchEloquentQuery()`, which by default delegates to `getEloquentQuery()`.
+
+**This means your existing `getEloquentQuery()` scope is inherited by omnisearch — but only if it is always applied.** If the scope is conditional (e.g. based on user role), omnisearch may bypass it when the condition is not met.
+
+The safest approach is to override `getGlobalSearchEloquentQuery()` explicitly in your resource:
+
+```php
+use Illuminate\Database\Eloquent\Builder;
+
+class OrderResource extends Resource
+{
+    // Scopes the list table (and is also called by global search by default)
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()?->isCustomer()) {
+            $query->where('user_id', auth()->id());
+        }
+
+        return $query;
+    }
+
+    // Explicitly scope omnisearch results — do not rely on getEloquentQuery() alone
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        $query = parent::getGlobalSearchEloquentQuery();
+
+        if (auth()->user()?->isCustomer()) {
+            $query->where('user_id', auth()->id());
+        }
+
+        return $query;
+    }
+}
+```
+
+With this setup:
+- **Customers** — omnisearch only returns their own orders
+- **Admins** — omnisearch returns all orders (no scope applied)
+
+> **Multi-panel apps** — if the same model is exposed in multiple panels (e.g. an admin panel and a customer portal), each panel's `Resource` class is independent. Apply scoping only in the portal resource; leave the admin resource untouched.
+
 ### 3. Panel Scope
 
 Lists other Filament panels the authenticated user has access to. Useful in multi-panel applications (e.g. admin + customer portal). Results appear even without a search query, so users can switch panels from the palette.
