@@ -6,7 +6,8 @@ Think of it as Spotlight or VS Code's command palette, built specifically for Fi
 
 ## Preview
 
-![preview](https://raw.githubusercontent.com/soleman/filament-omnisearch/resources/img/preview.png)
+![preview](https://raw.githubusercontent.com/solemanzoya/filament-omnisearch/add-preview-image/resources/img/preview.png)
+
 
 
 ## Features
