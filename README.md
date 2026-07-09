@@ -149,6 +149,28 @@ With this setup:
 
 Lists other Filament panels the authenticated user has access to. Useful in multi-panel applications (e.g. admin + customer portal). Results appear even without a search query, so users can switch panels from the palette.
 
+> **Panel visibility requires `FilamentUser`.**
+> The panel scope checks access by calling `canAccessPanel()` on the authenticated user. This method is only available when your `User` model implements `Filament\Models\Contracts\FilamentUser`. Without it, the scope falls back to `app()->environment('local')` — meaning all panels are visible to all users in local development regardless of their role.
+>
+> To correctly restrict panel visibility, implement `FilamentUser` and define `canAccessPanel()`:
+>
+> ```php
+> use Filament\Models\Contracts\FilamentUser;
+> use Filament\Panel;
+>
+> class User extends Authenticatable implements FilamentUser
+> {
+>     public function canAccessPanel(Panel $panel): bool
+>     {
+>         return match ($panel->getId()) {
+>             'admin'  => $this->isAdmin(),
+>             'portal' => $this->isAdmin() || $this->isCustomer(),
+>             default  => false,
+>         };
+>     }
+> }
+> ```
+
 ### 4. Action Scope
 
 Shows global actions registered on the plugin (see [Global Actions](#global-actions) below). Actions appear without a search query so they are always discoverable.
