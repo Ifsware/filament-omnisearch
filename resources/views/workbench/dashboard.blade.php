@@ -8,7 +8,7 @@
         <div class="mt-12 grid grid-cols-2 gap-4">
             <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <h2 class="font-semibold text-gray-900 dark:text-white mb-2">Panels</h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Quick switch between Cortex, Maestro, Kreasi, and Atlas.</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Quick switch between Panel 1, panel 2, and panel 3.</p>
             </div>
             <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <h2 class="font-semibold text-gray-900 dark:text-white mb-2">Actions</h2>
