@@ -8,15 +8,15 @@ use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Ifsware\Omnisearch\Concerns\HasOmnisearchPageActions;
 use Ifsware\Omnisearch\Concerns\MatchesOmnisearchQuery;
+use Ifsware\Omnisearch\Concerns\TransConfig;
 use Ifsware\Omnisearch\Contracts\OmnisearchScope;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Config;
 use Throwable;
 
 final class OmnisearchPageActionsScope implements OmnisearchScope
 {
     use MatchesOmnisearchQuery;
-    use \Ifsware\Omnisearch\Concerns\TransConfig;
+    use TransConfig;
 
     public function isActive(): bool
     {
@@ -47,14 +47,14 @@ final class OmnisearchPageActionsScope implements OmnisearchScope
 
             try {
                 $items[] = [
-                    'id'       => 'page.index.'.$resourceClass::getSlug(),
-                    'type'     => 'url',
-                    'group'    => $group,
-                    'title'    => $resourceClass::getPluralModelLabel(),
+                    'id' => 'page.index.'.$resourceClass::getSlug(),
+                    'type' => 'url',
+                    'group' => $group,
+                    'title' => $resourceClass::getPluralModelLabel(),
                     'subtitle' => __('omnisearch::omnisearch.go_to_list', ['resource' => strtolower($resourceClass::getPluralModelLabel())]),
-                    'icon'     => 'heroicon-o-list-bullet',
+                    'icon' => 'heroicon-o-list-bullet',
                     'keywords' => ['list', 'index', strtolower($resourceClass::getPluralModelLabel()), strtolower($resourceClass::getModelLabel())],
-                    'url'      => $resourceClass::getUrl('index'),
+                    'url' => $resourceClass::getUrl('index'),
                     'iconHtml' => rescue(fn (): string => Blade::render('<x-heroicon-o-list-bullet style="width:20px;height:20px" />'), ''),
                 ];
             } catch (Throwable) {
@@ -62,14 +62,14 @@ final class OmnisearchPageActionsScope implements OmnisearchScope
 
             try {
                 $items[] = [
-                    'id'       => 'page.create.'.$resourceClass::getSlug(),
-                    'type'     => 'url',
-                    'group'    => $group,
-                    'title'    => __('omnisearch::omnisearch.create_resource', ['resource' => $resourceClass::getModelLabel()]),
+                    'id' => 'page.create.'.$resourceClass::getSlug(),
+                    'type' => 'url',
+                    'group' => $group,
+                    'title' => __('omnisearch::omnisearch.create_resource', ['resource' => $resourceClass::getModelLabel()]),
                     'subtitle' => __('omnisearch::omnisearch.add_new_resource', ['resource' => strtolower($resourceClass::getModelLabel())]),
-                    'icon'     => 'heroicon-o-plus-circle',
+                    'icon' => 'heroicon-o-plus-circle',
                     'keywords' => ['create', 'new', 'add', strtolower($resourceClass::getModelLabel())],
-                    'url'      => $resourceClass::getUrl('create'),
+                    'url' => $resourceClass::getUrl('create'),
                     'iconHtml' => rescue(fn (): string => Blade::render('<x-heroicon-o-plus-circle style="width:20px;height:20px" />'), ''),
                 ];
             } catch (Throwable) {
@@ -91,7 +91,7 @@ final class OmnisearchPageActionsScope implements OmnisearchScope
                             continue;
                         }
 
-                        $action['id']    = 'page.'.$route.'.'.$resourceClass::getSlug().'.'.$id;
+                        $action['id'] = 'page.'.$route.'.'.$resourceClass::getSlug().'.'.$id;
                         $action['group'] = empty($action['group']) ? $group : $action['group'];
 
                         $items[] = $action;
@@ -109,7 +109,6 @@ final class OmnisearchPageActionsScope implements OmnisearchScope
     }
 
     /**
-     * @param  string  $pageClass
      * @return array<int, array<string, mixed>>
      */
     private function resolvePageCustomActions(string $pageClass): array
@@ -126,7 +125,7 @@ final class OmnisearchPageActionsScope implements OmnisearchScope
         return $result;
     }
 
-    /** @param class-string<Resource> $resourceClass */
+    /** @param class-string<resource> $resourceClass */
     private function resourceHasPageActions(string $resourceClass): bool
     {
         try {

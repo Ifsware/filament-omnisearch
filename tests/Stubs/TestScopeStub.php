@@ -21,14 +21,14 @@ final class TestScopeStub implements OmnisearchScope
     {
         return [
             [
-                'id'       => 'stub.item',
-                'type'     => 'url',
-                'group'    => 'Stub',
-                'title'    => 'Stub Item',
+                'id' => 'stub.item',
+                'type' => 'url',
+                'group' => 'Stub',
+                'title' => 'Stub Item',
                 'subtitle' => 'A stub item for testing',
-                'icon'     => 'heroicon-o-bolt',
+                'icon' => 'heroicon-o-bolt',
                 'keywords' => ['stub', 'test'],
-                'url'      => '/stub',
+                'url' => '/stub',
             ],
         ];
     }

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Ifsware\Omnisearch;
 
-use Illuminate\Support\Facades\Config;
+use Ifsware\Omnisearch\Concerns\TransConfig;
 
 final class OmnisearchAction
 {
-    use \Ifsware\Omnisearch\Concerns\TransConfig;
+    use TransConfig;
+
     protected string $title = '';
 
     protected ?string $titleTransKey = null;
@@ -142,12 +143,12 @@ final class OmnisearchAction
             : (filled($this->subtitle) ? $this->subtitle : $this->trans('omnisearch::omnisearch.run_this_action'));
 
         $data = [
-            'id'       => $this->id,
-            'type'     => $this->type,
-            'group'    => $this->transConfig('omnisearch.groups.actions.label', 'omnisearch::omnisearch.actions'),
-            'title'    => $title,
+            'id' => $this->id,
+            'type' => $this->type,
+            'group' => $this->transConfig('omnisearch.groups.actions.label', 'omnisearch::omnisearch.actions'),
+            'title' => $title,
             'subtitle' => $subtitle,
-            'icon'     => $this->icon,
+            'icon' => $this->icon,
             'keywords' => $this->keywords,
         ];
 

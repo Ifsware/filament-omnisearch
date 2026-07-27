@@ -140,6 +140,19 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                 items[nextPos]?.scrollIntoView({ block: 'nearest' })
             })
         },
+        moveTopbar(direction) {
+            const items = [...(this.$refs.omnisearchContent?.querySelectorAll('[data-command-index]') ?? [])]
+                .filter(el => parseInt(el.dataset.commandIndex) < this.topbarCount)
+            if (!items.length) return
+            const currentPos = items.findIndex(el => el.dataset.commandIndex === String(this.activeIndex))
+            const nextPos = currentPos === -1
+                ? (direction >= 0 ? 0 : items.length - 1)
+                : (currentPos + direction + items.length) % items.length
+            this.activeIndex = parseInt(items[nextPos].dataset.commandIndex)
+            this.$nextTick(() => {
+                items[nextPos]?.scrollIntoView({ block: 'nearest' })
+            })
+        },
         execute(command) {
             if (!command) return
             const term = this.$refs.input?.value?.trim()
@@ -199,6 +212,8 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
     x-on:keydown.window.prevent.escape="open ? closePalette() : null"
     x-on:keydown.window.prevent.arrow-down="open ? moveSelection(1) : null"
     x-on:keydown.window.prevent.arrow-up="open ? moveSelection(-1) : null"
+    x-on:keydown.window.arrow-left="if (open && !searchQuery) { $event.preventDefault(); moveTopbar(-1) }"
+    x-on:keydown.window.arrow-right="if (open && !searchQuery) { $event.preventDefault(); moveTopbar(1) }"
     x-on:keydown.window.enter="if (open) { $event.preventDefault(); executeActiveCommand() }"
     x-on:open-omnisearch.window="openPalette()"
     x-on:omnisearch-page-actions.window="pageActions = $event.detail.actions ?? []; $nextTick(() => rebuildItemShortcuts())"
@@ -496,7 +511,7 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
             {{-- Footer --}}
             <div class="omnisearch-footer">
                 <div class="omnisearch-footer-shortcuts">
-                    <span class="omnisearch-footer-shortcut"><kbd class="omnisearch-kbd">↑↓</kbd> {{ __('omnisearch::omnisearch.footer_navigate') }}</span>
+                    <span class="omnisearch-footer-shortcut"><kbd class="omnisearch-kbd">{{ ($panels !== [] || $actions !== []) ? '↑↓←→' : '↑↓' }}</kbd> {{ __('omnisearch::omnisearch.footer_navigate') }}</span>
                     <span class="omnisearch-footer-shortcut"><kbd class="omnisearch-kbd">↵</kbd> {{ __('omnisearch::omnisearch.footer_open') }}</span>
                     <span class="omnisearch-footer-shortcut"><kbd class="omnisearch-kbd">Esc</kbd> {{ __('omnisearch::omnisearch.footer_close') }}</span>
                 </div>

@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Ifsware\Omnisearch\Tests;
 
+use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
+use BladeUI\Icons\BladeIconsServiceProvider;
+use Filament\FilamentServiceProvider;
+use Ifsware\Omnisearch\OmnisearchServiceProvider;
+use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase;
 
 abstract class TestbenchTestCase extends TestCase
@@ -11,11 +16,11 @@ abstract class TestbenchTestCase extends TestCase
     protected function getPackageProviders($app): array
     {
         return [
-            \BladeUI\Heroicons\BladeHeroiconsServiceProvider::class,
-            \BladeUI\Icons\BladeIconsServiceProvider::class,
-            \Filament\FilamentServiceProvider::class,
-            \Livewire\LivewireServiceProvider::class,
-            \Ifsware\Omnisearch\OmnisearchServiceProvider::class,
+            BladeHeroiconsServiceProvider::class,
+            BladeIconsServiceProvider::class,
+            FilamentServiceProvider::class,
+            LivewireServiceProvider::class,
+            OmnisearchServiceProvider::class,
         ];
     }
 

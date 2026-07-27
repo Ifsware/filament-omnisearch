@@ -62,15 +62,15 @@ final class OmnisearchResourceScope implements OmnisearchScope
                 }
 
                 $items[] = [
-                    'id'       => sprintf('resource.%s.%s', Str::slug((string) $category), $index),
-                    'type'     => 'url',
-                    'group'    => (string) $category,
-                    'title'    => $this->normalizeText($result->title),
+                    'id' => sprintf('resource.%s.%s', Str::slug((string) $category), $index),
+                    'type' => 'url',
+                    'group' => (string) $category,
+                    'title' => $this->normalizeText($result->title),
                     'subtitle' => $this->formatSubtitle($result),
-                    'icon'     => 'heroicon-o-magnifying-glass',
+                    'icon' => 'heroicon-o-magnifying-glass',
                     'keywords' => [(string) $category],
-                    'url'      => $result->url,
-                    'preview'  => $this->buildPreview($result),
+                    'url' => $result->url,
+                    'preview' => $this->buildPreview($result),
                 ];
 
                 $index++;
@@ -120,7 +120,7 @@ final class OmnisearchResourceScope implements OmnisearchScope
         }
 
         return [
-            'title'  => $this->normalizeText($result->title),
+            'title' => $this->normalizeText($result->title),
             'fields' => $fields,
         ];
     }

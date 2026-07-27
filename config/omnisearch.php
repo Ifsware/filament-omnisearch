@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+use Ifsware\Omnisearch\Scopes\OmnisearchNavigationScope;
+use Ifsware\Omnisearch\Scopes\OmnisearchPanelScope;
+use Ifsware\Omnisearch\Scopes\OmnisearchResourceScope;
 
 return [
 
@@ -21,9 +24,9 @@ return [
     | Remove or add scopes to control what appears in the palette.
     */
     'scopes' => [
-        \Ifsware\Omnisearch\Scopes\OmnisearchNavigationScope::class,
-        \Ifsware\Omnisearch\Scopes\OmnisearchResourceScope::class,
-        \Ifsware\Omnisearch\Scopes\OmnisearchPanelScope::class,
+        OmnisearchNavigationScope::class,
+        OmnisearchResourceScope::class,
+        OmnisearchPanelScope::class,
     ],
 
     /*
@@ -61,7 +64,7 @@ return [
     */
     'groups' => [
         'navigate' => [
-            'label'    => null,
+            'label' => null,
             'subtitle' => null,
         ],
         'actions' => [
@@ -79,8 +82,8 @@ return [
     */
     'recent_searches' => [
         'enabled' => true,
-        'label'   => null,
-        'max'     => 5,
+        'label' => null,
+        'max' => 5,
     ],
 
     /*
@@ -92,7 +95,7 @@ return [
     | Suggestions are clickable keywords shown when a search returns no results.
     */
     'empty_state' => [
-        'message'     => null,
+        'message' => null,
         'suggestions' => ['dashboard', 'users', 'settings'],
     ],
 

@@ -21,16 +21,16 @@ final class PreviewScopeStub implements OmnisearchScope
     {
         return [
             [
-                'id'       => 'preview.test',
-                'type'     => 'url',
-                'group'    => 'PreviewTest',
-                'title'    => 'Preview Item',
+                'id' => 'preview.test',
+                'type' => 'url',
+                'group' => 'PreviewTest',
+                'title' => 'Preview Item',
                 'subtitle' => 'Has preview data',
-                'icon'     => 'heroicon-o-bolt',
+                'icon' => 'heroicon-o-bolt',
                 'keywords' => ['preview'],
-                'url'      => '/preview',
-                'preview'  => [
-                    'title'  => 'Preview Title',
+                'url' => '/preview',
+                'preview' => [
+                    'title' => 'Preview Title',
                     'fields' => [
                         ['label' => 'Email', 'value' => 'test@example.com'],
                     ],

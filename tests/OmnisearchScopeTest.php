@@ -8,13 +8,16 @@ use Ifsware\Omnisearch\Contracts\OmnisearchScope;
 use Ifsware\Omnisearch\Livewire\Omnisearch;
 use Ifsware\Omnisearch\OmnisearchAction;
 use Ifsware\Omnisearch\OmnisearchManager;
+use Ifsware\Omnisearch\Scopes\OmnisearchActionScope;
+use Ifsware\Omnisearch\Tests\Stubs\PreviewScopeStub;
+use Ifsware\Omnisearch\Tests\Stubs\TestScopeStub;
 
 final class OmnisearchScopeTest extends TestbenchTestCase
 {
-
     public function test_scope_returns_items(): void
     {
-        $scope = new class implements OmnisearchScope {
+        $scope = new class implements OmnisearchScope
+        {
             public function isActive(): bool
             {
                 return true;
@@ -45,8 +48,8 @@ final class OmnisearchScopeTest extends TestbenchTestCase
 
     public function test_component_uses_scopes(): void
     {
-        $component = new Omnisearch();
-        $component->registerScope(\Ifsware\Omnisearch\Tests\Stubs\TestScopeStub::class);
+        $component = new Omnisearch;
+        $component->registerScope(TestScopeStub::class);
 
         $items = $component->getScopedItems('', []);
 
@@ -65,10 +68,10 @@ final class OmnisearchScopeTest extends TestbenchTestCase
         );
 
         config(['omnisearch.scopes' => [
-            \Ifsware\Omnisearch\Scopes\OmnisearchActionScope::class,
+            OmnisearchActionScope::class,
         ]]);
 
-        $component = new Omnisearch();
+        $component = new Omnisearch;
         $html = $component->render()->render();
 
         $this->assertStringContainsString('Test Action', $html);
@@ -78,10 +81,10 @@ final class OmnisearchScopeTest extends TestbenchTestCase
     public function test_render_includes_preview_in_data_command(): void
     {
         config(['omnisearch.scopes' => [
-            \Ifsware\Omnisearch\Tests\Stubs\PreviewScopeStub::class,
+            PreviewScopeStub::class,
         ]]);
 
-        $component = new Omnisearch();
+        $component = new Omnisearch;
         $html = $component->render()->render();
 
         $this->assertStringContainsString('Preview Item', $html);

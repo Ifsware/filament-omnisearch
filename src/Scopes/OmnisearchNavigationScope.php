@@ -9,14 +9,14 @@ use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
 use Filament\Support\Icons\Heroicon;
 use Ifsware\Omnisearch\Concerns\MatchesOmnisearchQuery;
+use Ifsware\Omnisearch\Concerns\TransConfig;
 use Ifsware\Omnisearch\Contracts\OmnisearchScope;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 
 final class OmnisearchNavigationScope implements OmnisearchScope
 {
     use MatchesOmnisearchQuery;
-    use \Ifsware\Omnisearch\Concerns\TransConfig;
+    use TransConfig;
 
     public function isActive(): bool
     {
@@ -49,14 +49,14 @@ final class OmnisearchNavigationScope implements OmnisearchScope
                 }
 
                 $items[] = [
-                    'id'       => 'nav.'.Str::slug($item->getLabel()),
-                    'type'     => 'url',
-                    'group'    => $this->transConfig('omnisearch.groups.navigate.label', 'omnisearch::omnisearch.navigate'),
-                    'title'    => $item->getLabel(),
+                    'id' => 'nav.'.Str::slug($item->getLabel()),
+                    'type' => 'url',
+                    'group' => $this->transConfig('omnisearch.groups.navigate.label', 'omnisearch::omnisearch.navigate'),
+                    'title' => $item->getLabel(),
                     'subtitle' => $this->resolveSubtitle($item),
-                    'icon'     => $this->resolveIcon($item),
+                    'icon' => $this->resolveIcon($item),
                     'keywords' => array_values(array_filter([$item->getLabel(), $this->resolveGroupLabel($item)])),
-                    'url'      => $item->getUrl(),
+                    'url' => $item->getUrl(),
                 ];
             }
         }

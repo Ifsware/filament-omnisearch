@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Ifsware\Omnisearch\Concerns;
 
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Config;
 use Throwable;
 
 /**
@@ -20,11 +20,12 @@ use Throwable;
  *
  * Override getOmnisearchActions() to add custom page-specific actions.
  *
- * @phpstan-require-extends \Filament\Resources\Pages\Page
+ * @phpstan-require-extends Page
  */
 trait HasOmnisearchPageActions
 {
-    use \Ifsware\Omnisearch\Concerns\TransConfig;
+    use TransConfig;
+
     public function bootedHasOmnisearchPageActions(): void
     {
         $this->dispatch('omnisearch-page-actions', actions: $this->resolveOmnisearchPageActions());
@@ -50,7 +51,7 @@ trait HasOmnisearchPageActions
         return $this->getOmnisearchActions();
     }
 
-    /** @return class-string<Resource> */
+    /** @return class-string<resource> */
     private function getOmnisearchResource(): string
     {
         return static::getResource();
