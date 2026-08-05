@@ -99,4 +99,13 @@ return [
         'suggestions' => ['dashboard', 'users', 'settings'],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Footer Brand
+    |--------------------------------------------------------------------------
+    | Text shown on the right side of the footer. Set to null to hide it,
+    | or provide a custom string to replace the default "Filament Omnisearch".
+    */
+    'footer_brand' => 'Filament Omnisearch',
+
 ];

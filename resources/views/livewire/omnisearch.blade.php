@@ -515,7 +515,9 @@ $shortcutDisplay = collect(explode('+', config('omnisearch.shortcut', 'mod+k')))
                     <span class="omnisearch-footer-shortcut"><kbd class="omnisearch-kbd">↵</kbd> {{ __('omnisearch::omnisearch.footer_open') }}</span>
                     <span class="omnisearch-footer-shortcut"><kbd class="omnisearch-kbd">Esc</kbd> {{ __('omnisearch::omnisearch.footer_close') }}</span>
                 </div>
-                <span>Filament Omnisearch</span>
+                @if (filled(config('omnisearch.footer_brand')))
+                    <span>{{ config('omnisearch.footer_brand') }}</span>
+                @endif
             </div>
         </div>
     </div>
